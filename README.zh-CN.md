@@ -4,6 +4,8 @@ ComfyUI-MSST 将 MSST-WEBUI 的推理能力封装成 ComfyUI 自定义节点，�
 
 本扩展使用 ComfyUI 原生 `AUDIO` 输入/输出，适合做人声/伴奏分离、多音轨分离、降噪、去混响、去延迟、气声分离、音质修复和 MIDI 提取等任务。
 
+![ComfyUI-MSST 工作流预览](imgs/msst-1.png)
+
 ## 目录结构
 
 扩展目录：
@@ -174,6 +176,8 @@ Load Audio
   -> MSST SOME 人声转 MIDI
 ```
 
+示例工作流：[workflows/Separate_vocals.json](workflows/Separate_vocals.json)
+
 ## 参数提示
 
 - `device`
@@ -260,3 +264,8 @@ model.ckpt.yaml
 - 英文说明：`README.md`
 - 原 MSST-WEBUI 文档备份：`old-doc`
 - 原项目运行时：`msst_webui`
+
+## 许可证
+
+ComfyUI-MSST 使用 GNU Affero General Public License v3.0 发布，完整条款见 [LICENSE](LICENSE)。
+内置的 MSST-WEBUI 运行时位于 `msst_webui`，同样按 AGPL-3.0 分发；如果重新分发修改版本，请遵守相应许可证要求。

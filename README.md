@@ -1,9 +1,13 @@
 # Comfy-MSST
 
+[中文说明](README.zh-CN.md)
+
 Comfy-MSST packages the MSST-WEBUI inference runtime as ComfyUI custom nodes.
 The plugin uses ComfyUI native `AUDIO` inputs and outputs, so MSST separation,
 denoise, dereverb, de-echo, and restoration models can be inserted into normal
 audio workflows.
+
+![Comfy-MSST workflow preview](imgs/msst-1.png)
 
 ## Source Layout
 
@@ -186,6 +190,8 @@ wiki: `https://my.feishu.cn/wiki/Dy0bwG4XIizBgJkePDucILaMnlf`.
 4. `MSST Get Stem`
 5. Native `Save Audio`
 
+Example workflow: [workflows/Separate_vocals.json](workflows/Separate_vocals.json)
+
 ## Dependency Notes
 
 ComfyUI already owns the core stack: `torch`, `torchvision`, `torchaudio`,
@@ -205,3 +211,10 @@ loading separation models.
 
 Install only the supplemental dependencies from this plugin's
 `requirements.txt` into the same Python environment that launches ComfyUI.
+
+## License
+
+ComfyUI-MSST is released under the GNU Affero General Public License v3.0.
+See [LICENSE](LICENSE) for the full license text. The vendored MSST-WEBUI
+runtime in `msst_webui` is also distributed under AGPL-3.0; keep its license
+terms in mind when redistributing modified versions.
