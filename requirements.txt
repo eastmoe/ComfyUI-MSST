@@ -7,7 +7,7 @@ accelerate
 audioread
 auraloss
 beartype==0.14.1
-bitsandbytes; platform_system != "Windows"
+# bitsandbytes; platform_system != "Windows"
 colorama
 demucs==4.0.0
 huggingface-hub>=0.23.0
