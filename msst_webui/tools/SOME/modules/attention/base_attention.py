@@ -34,8 +34,15 @@ class Attention(nn.Module):
 		if mask is not None:
 			mask = mask.unsqueeze(1).unsqueeze(1)
 
-		with torch.backends.cuda.sdp_kernel(enable_math=False):
+		try:
 			out = F.scaled_dot_product_attention(q, k, v, attn_mask=mask)
+		except Exception:
+			scale = q.shape[-1] ** -0.5
+			sim = torch.matmul(q, k.transpose(-2, -1)) * scale
+			if mask is not None:
+				sim = sim.masked_fill(~mask, torch.finfo(sim.dtype).min)
+			attn = sim.softmax(dim=-1)
+			out = torch.matmul(attn, v)
 
 		out = rearrange(out, "b h t c -> b t (h c) ", h=self.heads)
 		return self.to_out(out)
