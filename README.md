@@ -71,7 +71,7 @@ $env:COMFY_MSST_SOME_WEIGHT_ROOT="D:\ComfyUI\models\MSST\SOME_weights"
 ## Official Model Recommendations
 
 The following recommendation list is transcribed from the MSST official Feishu
-wiki: `https://my.feishu.cn/wiki/Dy0bwG4XIizBgJkePDucILaMnlf`.
+wiki: `https://my.feishu.cn/wiki/Dy0bwG4XIizBgJkePDucILaMnlf`. These model weights can be downloaded from [huggingface](https://huggingface.co/Sucial/MSST-WebUI).
 
 ### MSST Models
 
