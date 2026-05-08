@@ -71,7 +71,7 @@ $env:COMFY_MSST_OUTPUT_ROOT="D:\ComfyUI\output\MSST"
 
 ## MSST-WebUI官方模型推荐
 
-下面的模型推荐列表来自于MSST官方飞书: `https://my.feishu.cn/wiki/Dy0bwG4XIizBgJkePDucILaMnlf`.
+下面的模型推荐列表来自于MSST官方飞书: `https://my.feishu.cn/wiki/Dy0bwG4XIizBgJkePDucILaMnlf`.可从[huggingface](https://huggingface.co/Sucial/MSST-WebUI)下载。
 
 ### MSST模型
 
