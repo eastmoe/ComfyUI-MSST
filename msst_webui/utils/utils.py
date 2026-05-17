@@ -7,7 +7,6 @@ import torch.nn as nn
 import yaml
 import librosa
 import torch.nn.functional as F
-from omegaconf import OmegaConf
 from tqdm.auto import tqdm
 from numpy.typing import NDArray
 from typing import Dict
@@ -20,10 +19,7 @@ logger = get_logger()
 
 def get_model_from_config(model_type, config_path):
 	with open(config_path) as f:
-		if model_type == "htdemucs":
-			config = OmegaConf.load(config_path)
-		else:
-			config = AttrDict(yaml.load(f, Loader=yaml.FullLoader))
+		config = AttrDict(yaml.load(f, Loader=yaml.FullLoader))
 
 	if model_type == "mdx23c":
 		from modules.mdx23c_tfc_tdf_v3 import TFC_TDF_net

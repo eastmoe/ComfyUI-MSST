@@ -11,6 +11,7 @@
 # huggingface-hub>=0.23.0
 # lightning>=2.0.0
 # ml_collections
+# omegaconf>=2.2.3
 # pedalboard>=0.8.1
 # prodigyopt
 # protobuf>=3.20.3
@@ -33,7 +34,6 @@ librosa>=0.10.2
 pytorch-lightning>=2.0.0
 mido
 numpy>=1.25.0,<3.0.0
-omegaconf>=2.2.3
 pydub
 samplerate
 segmentation_models_pytorch==0.3.3

@@ -6,7 +6,6 @@ from functools import partial
 import numpy as np
 import torch
 import json
-from omegaconf import OmegaConf
 from demucs.demucs import Demucs
 from demucs.hdemucs import HDemucs
 
@@ -658,6 +657,7 @@ def get_model(args):
 		"segment": args.training.segment,
 	}
 	klass = {"demucs": Demucs, "hdemucs": HDemucs, "htdemucs": HTDemucs}[args.model]
-	kw = OmegaConf.to_container(getattr(args, args.model), resolve=True)
+	model_config = getattr(args, args.model)
+	kw = model_config.to_dict() if hasattr(model_config, "to_dict") else dict(model_config)
 	model = klass(**extra, **kw)
 	return model
