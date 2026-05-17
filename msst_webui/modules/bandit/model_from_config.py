@@ -4,9 +4,12 @@ import torch
 
 code_path = os.path.dirname(os.path.abspath(__file__)) + "/"
 sys.path.append(code_path)
+msst_webui_path = os.path.abspath(os.path.join(code_path, "..", ".."))
+if msst_webui_path not in sys.path:
+	sys.path.append(msst_webui_path)
 
 import yaml
-from ml_collections import ConfigDict
+from utils.attrdict import AttrDict
 
 torch.set_float32_matmul_precision("medium")
 
@@ -15,7 +18,7 @@ def get_model(config_path, weights_path, device):
 	from modules.bandit.core.model import MultiMaskMultiSourceBandSplitRNNSimple
 
 	f = open(config_path)
-	config = ConfigDict(yaml.load(f, Loader=yaml.FullLoader))
+	config = AttrDict(yaml.load(f, Loader=yaml.FullLoader))
 	f.close()
 
 	model = MultiMaskMultiSourceBandSplitRNNSimple(**config.model)

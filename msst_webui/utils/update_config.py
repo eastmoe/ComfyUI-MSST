@@ -1,8 +1,12 @@
 import yaml
 import os
 import json
-from ml_collections import ConfigDict
 import shutil
+
+try:
+	from utils.attrdict import AttrDict
+except ModuleNotFoundError:
+	from attrdict import AttrDict
 
 
 def clear_folder(folder_path):
@@ -44,7 +48,7 @@ def move_config():
 			continue
 		config_path = config_path.replace("configs", "configs_backup")
 		with open(config_path, "r", encoding="utf-8") as f:
-			config = ConfigDict(yaml.load(f, Loader=yaml.FullLoader))
+			config = AttrDict(yaml.load(f, Loader=yaml.FullLoader))
 			new_config_path = f"./configs/{model_data.get('model_class')}/{model_name}.yaml"
 			print(f"Move {config_path} to {new_config_path}")
 			save_configs(config, new_config_path)
