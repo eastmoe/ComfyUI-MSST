@@ -14,6 +14,7 @@
 # prodigyopt
 # protobuf>=3.20.3
 # rotary_embedding_torch==0.3.5
+# spafe==0.3.2
 # timm>=0.9.2
 # torch_log_wmse
 # torch
@@ -36,7 +37,6 @@ samplerate
 segmentation_models_pytorch==0.3.3
 six
 soundfile
-spafe==0.3.2
 torchseg
 transformers>=4.35.0,<6.0.0
 safetensors>=0.4.2

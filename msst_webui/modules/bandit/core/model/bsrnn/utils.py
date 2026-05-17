@@ -7,9 +7,68 @@ import torch
 from librosa import hz_to_midi, midi_to_hz
 from torch import Tensor
 from torchaudio import functional as taF
-from spafe.fbanks import bark_fbanks
-from spafe.utils.converters import erb2hz, hz2bark, hz2erb
 from torchaudio.functional.functional import _create_triangular_filterbank
+
+
+_ERB_A = (1000 * np.log(10)) / (24.7 * 4.37)
+
+
+def _hz_to_bark(freq):
+	# Wang, Sekey, and Gersho Bark conversion, matching spafe 0.3.2 defaults.
+	if isinstance(freq, Tensor):
+		return 6 * torch.asinh(freq / 600)
+	return 6 * np.arcsinh(freq / 600)
+
+
+def _bark_to_hz(bark):
+	if isinstance(bark, Tensor):
+		return 600 * torch.sinh(bark / 6)
+	return 600 * np.sinh(bark / 6)
+
+
+def _hz_to_erb(freq):
+	# Glasberg and Moore ERB conversion, matching spafe 0.3.2 defaults.
+	if isinstance(freq, Tensor):
+		return _ERB_A * torch.log10(1 + freq * 0.00437)
+	return _ERB_A * np.log10(1 + freq * 0.00437)
+
+
+def _erb_to_hz(erb):
+	if isinstance(erb, Tensor):
+		return (torch.pow(10, erb / _ERB_A) - 1) / 0.00437
+	return (10 ** (erb / _ERB_A) - 1) / 0.00437
+
+
+def _hermansky_bark_weight(freq_bark, center_bark):
+	distance = freq_bark - center_bark
+	if distance < -1.3 or distance > 2.5:
+		return 0.0
+	if distance <= -0.5:
+		return 10 ** (2.5 * (distance + 0.5))
+	if distance < 0.5:
+		return 1.0
+	return 10 ** (-(distance - 0.5))
+
+
+def _bark_filter_banks(n_bands, nfft, fs, low_freq=0.0, high_freq=None):
+	high_freq = high_freq or fs / 2
+	if low_freq < 0:
+		raise ValueError("low_freq cannot be negative")
+	if high_freq > fs / 2:
+		raise ValueError("high_freq cannot exceed Nyquist frequency")
+
+	low_bark = _hz_to_bark(low_freq)
+	high_bark = _hz_to_bark(high_freq)
+	bark_center_freqs = np.linspace(low_bark, high_bark, n_bands)
+	bins = np.floor((nfft + 1) * (_bark_to_hz(bark_center_freqs) / fs)).astype(int)
+
+	fbank = np.zeros((n_bands, nfft // 2 + 1))
+	for band_idx, center_bark in enumerate(bark_center_freqs):
+		for bin_idx in range(int(bins[0]), int(bins[-1])):
+			freq_bark = _hz_to_bark((bin_idx * fs) / (nfft + 1))
+			fbank[band_idx, bin_idx] = _hermansky_bark_weight(freq_bark, center_bark)
+
+	return fbank
 
 
 def band_widths_from_specs(band_specs):
@@ -274,7 +333,7 @@ class MusicalBandsplitSpecification(PerceptualBandsplitSpecification):
 
 def bark_filterbank(n_bands, fs, f_min, f_max, n_freqs):
 	nfft = 2 * (n_freqs - 1)
-	fb, _ = bark_fbanks.bark_filter_banks(nfilts=n_bands, nfft=nfft, fs=fs, low_freq=f_min, high_freq=f_max, scale="constant")
+	fb = _bark_filter_banks(n_bands=n_bands, nfft=nfft, fs=fs, low_freq=f_min, high_freq=f_max)
 
 	return torch.as_tensor(fb)
 
@@ -288,11 +347,11 @@ def triangular_bark_filterbank(n_bands, fs, f_min, f_max, n_freqs):
 	all_freqs = torch.linspace(0, fs // 2, n_freqs)
 
 	# calculate mel freq bins
-	m_min = hz2bark(f_min)
-	m_max = hz2bark(f_max)
+	m_min = _hz_to_bark(f_min)
+	m_max = _hz_to_bark(f_max)
 
 	m_pts = torch.linspace(m_min, m_max, n_bands + 2)
-	f_pts = 600 * torch.sinh(m_pts / 6)
+	f_pts = _bark_to_hz(m_pts)
 
 	# create filterbank
 	fb = _create_triangular_filterbank(all_freqs, f_pts)
@@ -327,15 +386,14 @@ class MiniBarkBandsplitSpecification(PerceptualBandsplitSpecification):
 
 def erb_filterbank(n_bands: int, fs: int, f_min: float, f_max: float, n_freqs: int) -> Tensor:
 	# freq bins
-	A = (1000 * np.log(10)) / (24.7 * 4.37)
 	all_freqs = torch.linspace(0, fs // 2, n_freqs)
 
 	# calculate mel freq bins
-	m_min = hz2erb(f_min)
-	m_max = hz2erb(f_max)
+	m_min = _hz_to_erb(f_min)
+	m_max = _hz_to_erb(f_max)
 
 	m_pts = torch.linspace(m_min, m_max, n_bands + 2)
-	f_pts = (torch.pow(10, (m_pts / A)) - 1) / 0.00437
+	f_pts = _erb_to_hz(m_pts)
 
 	# create filterbank
 	fb = _create_triangular_filterbank(all_freqs, f_pts)
