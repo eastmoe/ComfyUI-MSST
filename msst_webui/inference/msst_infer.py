@@ -16,6 +16,13 @@ from utils.logger import get_logger, set_log_level
 from utils.audio_export import save_audio_file
 
 
+def _drop_legacy_rotary_freqs(state_dict):
+	legacy_keys = [key for key in state_dict if key.endswith(".rotary_embed.freqs")]
+	for key in legacy_keys:
+		del state_dict[key]
+	return legacy_keys
+
+
 class MSSeparator:
 	def __init__(
 		self,
@@ -136,6 +143,9 @@ class MSSeparator:
 			state_dict = load_file(self.model_path, device=self.device)
 		else:
 			state_dict = torch.load(self.model_path, map_location=self.device, weights_only=True)
+		legacy_rotary_keys = _drop_legacy_rotary_freqs(state_dict)
+		if legacy_rotary_keys:
+			self.logger.debug(f"Ignored {len(legacy_rotary_keys)} legacy rotary embedding cache keys while loading model.")
 		model.load_state_dict(state_dict)
 
 		if len(self.device_ids) > 1:
