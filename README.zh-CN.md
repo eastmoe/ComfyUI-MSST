@@ -306,7 +306,7 @@ Load Audio
 
 ## 依赖说明
 
-ComfyUI 已经包含主要依赖，例如 `torch`、`numpy`、`transformers`、`safetensors`、`pyyaml`、`scipy` 等。本扩展支持 `transformers>=4.35,<6`，可兼容 4.x 和 5.x。
+ComfyUI 已经包含主要依赖，例如 `torch`、`numpy`、`transformers`、`safetensors`、`pyyaml`、`scipy` 等。本扩展支持 `numpy>=1.25,<3` 和 `transformers>=4.35,<6`，可兼容 NumPy 1.x/2.x 与 Transformers 4.x/5.x。
 
 本扩展只需要安装补充依赖：
 

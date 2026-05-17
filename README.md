@@ -195,7 +195,7 @@ Example workflow: [workflows/Separate_vocals.json](workflows/Separate_vocals.jso
 ## Dependency Notes
 
 ComfyUI already owns the core stack: `torch`, `torchvision`, `torchaudio`,
-`numpy>=1.25.0`, `transformers`, `safetensors`, `pyyaml`, `scipy`, `tqdm`,
+`numpy>=1.25,<3`, `transformers`, `safetensors`, `pyyaml`, `scipy`, `tqdm`,
 `psutil`, and `pydantic~=2.0`.
 
 The original MSST-WEBUI requirements pin `transformers~=4.35.0`,
@@ -203,7 +203,7 @@ The original MSST-WEBUI requirements pin `transformers~=4.35.0`,
 `transformers~=4.35.0` conflicts with ComfyUI's `transformers>=4.50.3`, and
 `audiomentations==0.24.0` requires `librosa<0.10.0`.
 
-Comfy-MSST supports `transformers>=4.35,<6` and uses `librosa>=0.10.2`, which also
+Comfy-MSST supports `transformers>=4.35,<6` and `numpy>=1.25,<3`, and uses `librosa>=0.10.2`, which also
 avoids the old `numpy` compatibility patch MSST-WEBUI documented for
 `librosa 0.9.2`. The vendored Bandit package initializer is also trimmed for
 inference, so training-only augmentation dependencies are not imported while

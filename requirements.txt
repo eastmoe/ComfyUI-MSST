@@ -16,7 +16,7 @@ librosa>=0.10.2
 pytorch-lightning>=2.0.0
 ml_collections
 mido
-numpy>=1.25.0
+numpy>=1.25.0,<3.0.0
 omegaconf>=2.2.3
 # pedalboard>=0.8.1
 # prodigyopt
