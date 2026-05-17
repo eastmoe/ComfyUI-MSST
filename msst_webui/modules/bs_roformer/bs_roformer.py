@@ -17,7 +17,7 @@ from torch.utils.checkpoint import checkpoint
 
 from typing import Tuple, Optional, List, Callable
 
-from rotary_embedding_torch import RotaryEmbedding
+from modules.bs_roformer.rotary_embedding import RotaryEmbedding
 
 from einops import rearrange, pack, unpack
 from einops.layers.torch import Rearrange

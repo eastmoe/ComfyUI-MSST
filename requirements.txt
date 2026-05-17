@@ -13,6 +13,7 @@
 # pedalboard>=0.8.1
 # prodigyopt
 # protobuf>=3.20.3
+# rotary_embedding_torch==0.3.5
 # timm>=0.9.2
 # torch_log_wmse
 # torch
@@ -31,7 +32,6 @@ mido
 numpy>=1.25.0,<3.0.0
 omegaconf>=2.2.3
 pydub
-rotary_embedding_torch==0.3.5
 samplerate
 segmentation_models_pytorch==0.3.3
 six
