@@ -1,5 +1,6 @@
 # Extra runtime dependencies for Comfy-MSST.
 # ComfyUI already provides torch, torchvision, torchaudio, numpy, einops,
+# safetensors, transformers,numpy,
 # transformers, safetensors, pyyaml, scipy, tqdm, psutil, and pydantic.
 # The bounds below are chosen to avoid downgrading the ComfyUI core stack.
 
@@ -34,10 +35,7 @@ demucs==4.0.0
 librosa>=0.10.2
 pytorch-lightning>=2.0.0
 mido
-numpy>=1.25.0,<3.0.0
 samplerate
 segmentation_models_pytorch==0.3.3
 soundfile
-transformers>=4.35.0,<6.0.0
-safetensors>=0.4.2
 neuraloperator>=2.0.0
