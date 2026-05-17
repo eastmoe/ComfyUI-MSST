@@ -1,4 +1,4 @@
-# ComfyUI-MSST 中文说明
+# ComfyUI-MSST
 
 ComfyUI-MSST 将 MSST-WEBUI 的推理能力封装成 ComfyUI 自定义节点，可以在 ComfyUI 的音频工作流中直接使用 MSST、UVR/VR、合奏和 SOME 人声转 MIDI 功能。
 
