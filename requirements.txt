@@ -32,10 +32,10 @@
 
 
 audioread
-demucs==4.0.0
+demucs>=4.0.0
 librosa>=0.10.2
 mido
 samplerate
-segmentation_models_pytorch==0.3.3
+segmentation_models_pytorch>=0.3.3
 soundfile
 neuraloperator>=2.0.0

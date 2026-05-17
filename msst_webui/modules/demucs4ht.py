@@ -2,6 +2,8 @@ import torch
 import torch.nn as nn
 import torch.nn.functional as F
 from functools import partial
+from importlib.metadata import PackageNotFoundError, version
+import warnings
 
 import numpy as np
 import torch
@@ -22,6 +24,32 @@ from demucs.demucs import rescale_module
 from demucs.states import capture_init
 from demucs.spec import spectro, ispectro
 from demucs.hdemucs import pad1d, ScaledEmbedding, HEncLayer, MultiWrap, HDecLayer
+
+
+def _version_tuple(value):
+	parts = []
+	for part in value.split("."):
+		digits = ""
+		for char in part:
+			if not char.isdigit():
+				break
+			digits += char
+		if digits == "":
+			break
+		parts.append(int(digits))
+	return tuple(parts)
+
+
+try:
+	_demucs_version = version("demucs")
+	if _version_tuple(_demucs_version) >= (4, 1):
+		warnings.warn(
+			f"demucs {_demucs_version} is newer than the HTDemucs compatibility target used by ComfyUI-MSST. "
+			"Demucs internal APIs may have changed; demucs 4.0.x is the tested line.",
+			RuntimeWarning,
+		)
+except PackageNotFoundError:
+	pass
 
 
 class HTDemucs(nn.Module):

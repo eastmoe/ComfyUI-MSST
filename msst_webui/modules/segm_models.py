@@ -1,6 +1,7 @@
 import torch
 import torch.nn as nn
 import segmentation_models_pytorch as smp
+from inspect import signature
 
 
 class STFT:
@@ -48,69 +49,56 @@ def get_act(act_type):
 		raise Exception
 
 
+def _get_decoder_options(config, section):
+	try:
+		return dict(getattr(config, section))
+	except:
+		return dict()
+
+
+def _adapt_decoder_options(decoder_cls, decoder_options):
+	params = signature(decoder_cls.__init__).parameters
+	options = dict(decoder_options)
+
+	if "decoder_use_norm" in params:
+		if "decoder_use_batchnorm" in options:
+			options["decoder_use_norm"] = options.pop("decoder_use_batchnorm")
+		if "psp_use_batchnorm" in options:
+			options["decoder_use_norm"] = options.pop("psp_use_batchnorm")
+	else:
+		if "decoder_use_batchnorm" in params and "decoder_use_norm" in options:
+			options["decoder_use_batchnorm"] = options.pop("decoder_use_norm")
+		if "psp_use_batchnorm" in params and "decoder_use_norm" in options:
+			options["psp_use_batchnorm"] = options.pop("decoder_use_norm")
+
+	return options
+
+
+def _build_decoder(decoder_cls, config, c, decoder_options):
+	decoder_options = _adapt_decoder_options(decoder_cls, decoder_options)
+	return decoder_cls(encoder_name=config.model.encoder_name, encoder_weights="imagenet", in_channels=c, classes=c, **decoder_options)
+
+
 def get_decoder(config, c):
 	decoder = None
-	decoder_options = dict()
 	if config.model.decoder_type == "unet":
-		try:
-			decoder_options = dict(config.decoder_unet)
-		except:
-			pass
-		decoder = smp.Unet(encoder_name=config.model.encoder_name, encoder_weights="imagenet", in_channels=c, classes=c, **decoder_options)
+		decoder = _build_decoder(smp.Unet, config, c, _get_decoder_options(config, "decoder_unet"))
 	elif config.model.decoder_type == "fpn":
-		try:
-			decoder_options = dict(config.decoder_fpn)
-		except:
-			pass
-		decoder = smp.FPN(encoder_name=config.model.encoder_name, encoder_weights="imagenet", in_channels=c, classes=c, **decoder_options)
+		decoder = _build_decoder(smp.FPN, config, c, _get_decoder_options(config, "decoder_fpn"))
 	elif config.model.decoder_type == "unet++":
-		try:
-			decoder_options = dict(config.decoder_unet_plus_plus)
-		except:
-			pass
-		decoder = smp.UnetPlusPlus(encoder_name=config.model.encoder_name, encoder_weights="imagenet", in_channels=c, classes=c, **decoder_options)
+		decoder = _build_decoder(smp.UnetPlusPlus, config, c, _get_decoder_options(config, "decoder_unet_plus_plus"))
 	elif config.model.decoder_type == "manet":
-		try:
-			decoder_options = dict(config.decoder_manet)
-		except:
-			pass
-		decoder = smp.MAnet(encoder_name=config.model.encoder_name, encoder_weights="imagenet", in_channels=c, classes=c, **decoder_options)
+		decoder = _build_decoder(smp.MAnet, config, c, _get_decoder_options(config, "decoder_manet"))
 	elif config.model.decoder_type == "linknet":
-		try:
-			decoder_options = dict(config.decoder_linknet)
-		except:
-			pass
-		decoder = smp.Linknet(encoder_name=config.model.encoder_name, encoder_weights="imagenet", in_channels=c, classes=c, **decoder_options)
+		decoder = _build_decoder(smp.Linknet, config, c, _get_decoder_options(config, "decoder_linknet"))
 	elif config.model.decoder_type == "pspnet":
-		try:
-			decoder_options = dict(config.decoder_pspnet)
-		except:
-			pass
-		decoder = smp.PSPNet(encoder_name=config.model.encoder_name, encoder_weights="imagenet", in_channels=c, classes=c, **decoder_options)
-	elif config.model.decoder_type == "pspnet":
-		try:
-			decoder_options = dict(config.decoder_pspnet)
-		except:
-			pass
-		decoder = smp.PSPNet(encoder_name=config.model.encoder_name, encoder_weights="imagenet", in_channels=c, classes=c, **decoder_options)
+		decoder = _build_decoder(smp.PSPNet, config, c, _get_decoder_options(config, "decoder_pspnet"))
 	elif config.model.decoder_type == "pan":
-		try:
-			decoder_options = dict(config.decoder_pan)
-		except:
-			pass
-		decoder = smp.PAN(encoder_name=config.model.encoder_name, encoder_weights="imagenet", in_channels=c, classes=c, **decoder_options)
+		decoder = _build_decoder(smp.PAN, config, c, _get_decoder_options(config, "decoder_pan"))
 	elif config.model.decoder_type == "deeplabv3":
-		try:
-			decoder_options = dict(config.decoder_deeplabv3)
-		except:
-			pass
-		decoder = smp.DeepLabV3(encoder_name=config.model.encoder_name, encoder_weights="imagenet", in_channels=c, classes=c, **decoder_options)
+		decoder = _build_decoder(smp.DeepLabV3, config, c, _get_decoder_options(config, "decoder_deeplabv3"))
 	elif config.model.decoder_type == "deeplabv3plus":
-		try:
-			decoder_options = dict(config.decoder_deeplabv3plus)
-		except:
-			pass
-		decoder = smp.DeepLabV3Plus(encoder_name=config.model.encoder_name, encoder_weights="imagenet", in_channels=c, classes=c, **decoder_options)
+		decoder = _build_decoder(smp.DeepLabV3Plus, config, c, _get_decoder_options(config, "decoder_deeplabv3plus"))
 	return decoder
 
 
