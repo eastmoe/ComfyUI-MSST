@@ -1,12 +1,10 @@
 import os
 import shutil
-import numpy as np
-import soundfile as sf
 import librosa
 import glob
 import traceback
-from pydub import AudioSegment
 
+from utils.audio_export import save_audio_file
 from utils.logger import get_logger
 from utils.constant import *
 from webui.utils import load_configs, load_vr_model, load_msst_model, get_vr_model, get_msst_model
@@ -261,17 +259,13 @@ def save_audio(audio, sr, output_format, file_name, store_dir):
 	wav_bit_depth = webui_config["settings"].get("wav_bit_depth", "FLOAT")
 	flac_bit_depth = webui_config["settings"].get("flac_bit_depth", "PCM_24")
 	mp3_bit_rate = webui_config["settings"].get("mp3_bit_rate", "320k")
-
-	if output_format.lower() == "flac":
-		file = os.path.join(store_dir, file_name + ".flac")
-		sf.write(file, audio, sr, subtype=flac_bit_depth)
-	elif output_format.lower() == "mp3":
-		file = os.path.join(store_dir, file_name + ".mp3")
-		if audio.dtype != np.int16:
-			audio = (audio * 32767).astype(np.int16)
-		audio_segment = AudioSegment(audio.tobytes(), frame_rate=sr, sample_width=audio.dtype.itemsize, channels=2)
-		audio_segment.export(file, format="mp3", bitrate=mp3_bit_rate)
-	else:
-		file = os.path.join(store_dir, file_name + ".wav")
-		sf.write(file, audio, sr, subtype=wav_bit_depth)
-	return file
+	return save_audio_file(
+		audio,
+		sr,
+		output_format,
+		file_name,
+		store_dir,
+		wav_bit_depth=wav_bit_depth,
+		flac_bit_depth=flac_bit_depth,
+		mp3_bit_rate=mp3_bit_rate,
+	)

@@ -11,9 +11,9 @@ import torch
 import librosa
 import numpy as np
 import soundfile as sf
-from pydub import AudioSegment
 from tqdm import tqdm
 from modules.vocal_remover.vr_separator import VRSeparator as VR
+from utils.audio_export import save_audio_file
 from utils.logger import get_logger, set_log_level
 from utils.constant import TEMP_PATH, MODELS_INFO
 
@@ -245,23 +245,16 @@ class VRSeparator:
 		return results
 
 	def save_audio(self, audio, sr, file_name, store_dir):
-		if self.output_format.lower() == "flac":
-			file = os.path.join(store_dir, file_name + ".flac")
-			sf.write(file, audio, sr, subtype=self.audio_params["flac_bit_depth"])
-
-		elif self.output_format.lower() == "mp3":
-			file = os.path.join(store_dir, file_name + ".mp3")
-
-			if audio.dtype != np.int16:
-				audio = (audio * 32767).astype(np.int16)
-
-			audio_segment = AudioSegment(audio.tobytes(), frame_rate=sr, sample_width=audio.dtype.itemsize, channels=2)
-
-			audio_segment.export(file, format="mp3", bitrate=self.audio_params["mp3_bit_rate"])
-
-		else:
-			file = os.path.join(store_dir, file_name + ".wav")
-			sf.write(file, audio, sr, subtype=self.audio_params["wav_bit_depth"])
+		save_audio_file(
+			audio,
+			sr,
+			self.output_format,
+			file_name,
+			store_dir,
+			wav_bit_depth=self.audio_params["wav_bit_depth"],
+			flac_bit_depth=self.audio_params["flac_bit_depth"],
+			mp3_bit_rate=self.audio_params["mp3_bit_rate"],
+		)
 
 	def del_cache(self):
 		self.logger.debug("Running garbage collection...")

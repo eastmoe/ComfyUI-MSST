@@ -107,7 +107,7 @@ class VRSeparator(CommonSeparator):
 
 		self.model_run = lambda *args, **kwargs: self.logger.error("Model run method is not initialised yet.")
 
-		# This should go away once we refactor to remove soundfile.write and replace with pydub like we did for the MDX rewrite
+		# This should go away once we centralize audio export for the VR path.
 		self.wav_subtype = "PCM_16"
 
 		# self.logger.debug("VR Separator initialisation complete")
