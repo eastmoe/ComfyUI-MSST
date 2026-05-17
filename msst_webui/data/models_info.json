@@ -9,7 +9,12 @@
         "primary_stem": "Instrumental",
         "secondary_stem": "Vocals",
         "vr_model_param": "4band_44100",
-        "link": "https://huggingface.co/Sucial/MSST-WebUI/resolve/main/All_Models/VR_Models/1_HP-UVR.pth"
+        "link": "https://huggingface.co/Sucial/MSST-WebUI/resolve/main/All_Models/VR_Models/1_HP-UVR.pth",
+        "model_type": "vr",
+        "stems": [
+            "Instrumental",
+            "Vocals"
+        ]
     },
     "2_HP-UVR.pth": {
         "model_class": "VR_Models",
@@ -21,7 +26,12 @@
         "primary_stem": "Instrumental",
         "secondary_stem": "Vocals",
         "vr_model_param": "4band_v2",
-        "link": "https://huggingface.co/Sucial/MSST-WebUI/resolve/main/All_Models/VR_Models/2_HP-UVR.pth"
+        "link": "https://huggingface.co/Sucial/MSST-WebUI/resolve/main/All_Models/VR_Models/2_HP-UVR.pth",
+        "model_type": "vr",
+        "stems": [
+            "Instrumental",
+            "Vocals"
+        ]
     },
     "3_HP-Vocal-UVR.pth": {
         "model_class": "VR_Models",
@@ -33,7 +43,12 @@
         "primary_stem": "Vocals",
         "secondary_stem": "Instrumental",
         "vr_model_param": "4band_44100",
-        "link": "https://huggingface.co/Sucial/MSST-WebUI/resolve/main/All_Models/VR_Models/3_HP-Vocal-UVR.pth"
+        "link": "https://huggingface.co/Sucial/MSST-WebUI/resolve/main/All_Models/VR_Models/3_HP-Vocal-UVR.pth",
+        "model_type": "vr",
+        "stems": [
+            "Vocals",
+            "Instrumental"
+        ]
     },
     "4_HP-Vocal-UVR.pth": {
         "model_class": "VR_Models",
@@ -45,7 +60,14 @@
         "primary_stem": "Vocals",
         "secondary_stem": "Instrumental",
         "vr_model_param": "4band_44100",
-        "link": "https://huggingface.co/Sucial/MSST-WebUI/resolve/main/All_Models/VR_Models/4_HP-Vocal-UVR.pth"
+        "link": "https://huggingface.co/Sucial/MSST-WebUI/resolve/main/All_Models/VR_Models/4_HP-Vocal-UVR.pth",
+        "model_type": "vr",
+        "stems": [
+            "Vocals",
+            "Instrumental"
+        ],
+        "note": "用于提取人声/伴奏，但是不如上面的 bs_roformer 模型",
+        "rating": "⭐⭐"
     },
     "5_HP-Karaoke-UVR.pth": {
         "model_class": "VR_Models",
@@ -58,7 +80,14 @@
         "secondary_stem": "Vocals",
         "vr_model_param": "4band_v2_sn",
         "link": "https://huggingface.co/Sucial/MSST-WebUI/resolve/main/All_Models/VR_Models/5_HP-Karaoke-UVR.pth",
-        "is_karaoke": true
+        "is_karaoke": true,
+        "model_type": "vr",
+        "stems": [
+            "Instrumental",
+            "Vocals"
+        ],
+        "note": "去和声",
+        "rating": "⭐⭐⭐"
     },
     "6_HP-Karaoke-UVR.pth": {
         "model_class": "VR_Models",
@@ -71,7 +100,14 @@
         "secondary_stem": "Vocals",
         "vr_model_param": "3band_44100_msb2",
         "link": "https://huggingface.co/Sucial/MSST-WebUI/resolve/main/All_Models/VR_Models/6_HP-Karaoke-UVR.pth",
-        "is_karaoke": true
+        "is_karaoke": true,
+        "model_type": "vr",
+        "stems": [
+            "Instrumental",
+            "Vocals"
+        ],
+        "note": "去和声，没有 5HP 激进",
+        "rating": "⭐⭐⭐"
     },
     "7_HP2-UVR.pth": {
         "model_class": "VR_Models",
@@ -83,7 +119,12 @@
         "primary_stem": "Instrumental",
         "secondary_stem": "Vocals",
         "vr_model_param": "3band_44100_msb2",
-        "link": "https://huggingface.co/Sucial/MSST-WebUI/resolve/main/All_Models/VR_Models/7_HP2-UVR.pth"
+        "link": "https://huggingface.co/Sucial/MSST-WebUI/resolve/main/All_Models/VR_Models/7_HP2-UVR.pth",
+        "model_type": "vr",
+        "stems": [
+            "Instrumental",
+            "Vocals"
+        ]
     },
     "8_HP2-UVR.pth": {
         "model_class": "VR_Models",
@@ -95,7 +136,12 @@
         "primary_stem": "Instrumental",
         "secondary_stem": "Vocals",
         "vr_model_param": "4band_44100",
-        "link": "https://huggingface.co/Sucial/MSST-WebUI/resolve/main/All_Models/VR_Models/8_HP2-UVR.pth"
+        "link": "https://huggingface.co/Sucial/MSST-WebUI/resolve/main/All_Models/VR_Models/8_HP2-UVR.pth",
+        "model_type": "vr",
+        "stems": [
+            "Instrumental",
+            "Vocals"
+        ]
     },
     "9_HP2-UVR.pth": {
         "model_class": "VR_Models",
@@ -107,7 +153,12 @@
         "primary_stem": "Instrumental",
         "secondary_stem": "Vocals",
         "vr_model_param": "4band_44100",
-        "link": "https://huggingface.co/Sucial/MSST-WebUI/resolve/main/All_Models/VR_Models/9_HP2-UVR.pth"
+        "link": "https://huggingface.co/Sucial/MSST-WebUI/resolve/main/All_Models/VR_Models/9_HP2-UVR.pth",
+        "model_type": "vr",
+        "stems": [
+            "Instrumental",
+            "Vocals"
+        ]
     },
     "10_SP-UVR-2B-32000-1.pth": {
         "model_class": "VR_Models",
@@ -119,7 +170,12 @@
         "primary_stem": "Instrumental",
         "secondary_stem": "Vocals",
         "vr_model_param": "2band_32000",
-        "link": "https://huggingface.co/Sucial/MSST-WebUI/resolve/main/All_Models/VR_Models/10_SP-UVR-2B-32000-1.pth"
+        "link": "https://huggingface.co/Sucial/MSST-WebUI/resolve/main/All_Models/VR_Models/10_SP-UVR-2B-32000-1.pth",
+        "model_type": "vr",
+        "stems": [
+            "Instrumental",
+            "Vocals"
+        ]
     },
     "11_SP-UVR-2B-32000-2.pth": {
         "model_class": "VR_Models",
@@ -131,7 +187,12 @@
         "primary_stem": "Instrumental",
         "secondary_stem": "Vocals",
         "vr_model_param": "2band_32000",
-        "link": "https://huggingface.co/Sucial/MSST-WebUI/resolve/main/All_Models/VR_Models/11_SP-UVR-2B-32000-2.pth"
+        "link": "https://huggingface.co/Sucial/MSST-WebUI/resolve/main/All_Models/VR_Models/11_SP-UVR-2B-32000-2.pth",
+        "model_type": "vr",
+        "stems": [
+            "Instrumental",
+            "Vocals"
+        ]
     },
     "12_SP-UVR-3B-44100.pth": {
         "model_class": "VR_Models",
@@ -143,7 +204,12 @@
         "primary_stem": "Instrumental",
         "secondary_stem": "Vocals",
         "vr_model_param": "3band_44100",
-        "link": "https://huggingface.co/Sucial/MSST-WebUI/resolve/main/All_Models/VR_Models/12_SP-UVR-3B-44100.pth"
+        "link": "https://huggingface.co/Sucial/MSST-WebUI/resolve/main/All_Models/VR_Models/12_SP-UVR-3B-44100.pth",
+        "model_type": "vr",
+        "stems": [
+            "Instrumental",
+            "Vocals"
+        ]
     },
     "13_SP-UVR-4B-44100-1.pth": {
         "model_class": "VR_Models",
@@ -155,7 +221,12 @@
         "primary_stem": "Instrumental",
         "secondary_stem": "Vocals",
         "vr_model_param": "4band_44100",
-        "link": "https://huggingface.co/Sucial/MSST-WebUI/resolve/main/All_Models/VR_Models/13_SP-UVR-4B-44100-1.pth"
+        "link": "https://huggingface.co/Sucial/MSST-WebUI/resolve/main/All_Models/VR_Models/13_SP-UVR-4B-44100-1.pth",
+        "model_type": "vr",
+        "stems": [
+            "Instrumental",
+            "Vocals"
+        ]
     },
     "14_SP-UVR-4B-44100-2.pth": {
         "model_class": "VR_Models",
@@ -167,7 +238,12 @@
         "primary_stem": "Instrumental",
         "secondary_stem": "Vocals",
         "vr_model_param": "4band_44100",
-        "link": "https://huggingface.co/Sucial/MSST-WebUI/resolve/main/All_Models/VR_Models/14_SP-UVR-4B-44100-2.pth"
+        "link": "https://huggingface.co/Sucial/MSST-WebUI/resolve/main/All_Models/VR_Models/14_SP-UVR-4B-44100-2.pth",
+        "model_type": "vr",
+        "stems": [
+            "Instrumental",
+            "Vocals"
+        ]
     },
     "15_SP-UVR-MID-44100-1.pth": {
         "model_class": "VR_Models",
@@ -179,7 +255,12 @@
         "primary_stem": "Instrumental",
         "secondary_stem": "Vocals",
         "vr_model_param": "3band_44100_mid",
-        "link": "https://huggingface.co/Sucial/MSST-WebUI/resolve/main/All_Models/VR_Models/15_SP-UVR-MID-44100-1.pth"
+        "link": "https://huggingface.co/Sucial/MSST-WebUI/resolve/main/All_Models/VR_Models/15_SP-UVR-MID-44100-1.pth",
+        "model_type": "vr",
+        "stems": [
+            "Instrumental",
+            "Vocals"
+        ]
     },
     "16_SP-UVR-MID-44100-2.pth": {
         "model_class": "VR_Models",
@@ -191,7 +272,12 @@
         "primary_stem": "Instrumental",
         "secondary_stem": "Vocals",
         "vr_model_param": "3band_44100_mid",
-        "link": "https://huggingface.co/Sucial/MSST-WebUI/resolve/main/All_Models/VR_Models/16_SP-UVR-MID-44100-2.pth"
+        "link": "https://huggingface.co/Sucial/MSST-WebUI/resolve/main/All_Models/VR_Models/16_SP-UVR-MID-44100-2.pth",
+        "model_type": "vr",
+        "stems": [
+            "Instrumental",
+            "Vocals"
+        ]
     },
     "17_HP-Wind_Inst-UVR.pth": {
         "model_class": "VR_Models",
@@ -203,7 +289,13 @@
         "primary_stem": "No Woodwinds",
         "secondary_stem": "Woodwinds",
         "vr_model_param": "4band_v3",
-        "link": "https://huggingface.co/Sucial/MSST-WebUI/resolve/main/All_Models/VR_Models/17_HP-Wind_Inst-UVR.pth"
+        "link": "https://huggingface.co/Sucial/MSST-WebUI/resolve/main/All_Models/VR_Models/17_HP-Wind_Inst-UVR.pth",
+        "model_type": "vr",
+        "stems": [
+            "No Woodwinds",
+            "Woodwinds"
+        ],
+        "note": "可以提取木管乐器"
     },
     "MGM_HIGHEND_v4.pth": {
         "model_class": "VR_Models",
@@ -215,7 +307,12 @@
         "primary_stem": "Instrumental",
         "secondary_stem": "Vocals",
         "vr_model_param": "1band_sr44100_hl1024",
-        "link": "https://huggingface.co/Sucial/MSST-WebUI/resolve/main/All_Models/VR_Models/MGM_HIGHEND_v4.pth"
+        "link": "https://huggingface.co/Sucial/MSST-WebUI/resolve/main/All_Models/VR_Models/MGM_HIGHEND_v4.pth",
+        "model_type": "vr",
+        "stems": [
+            "Instrumental",
+            "Vocals"
+        ]
     },
     "MGM_LOWEND_A_v4.pth": {
         "model_class": "VR_Models",
@@ -227,7 +324,12 @@
         "primary_stem": "Instrumental",
         "secondary_stem": "Vocals",
         "vr_model_param": "1band_sr32000_hl512",
-        "link": "https://huggingface.co/Sucial/MSST-WebUI/resolve/main/All_Models/VR_Models/MGM_LOWEND_A_v4.pth"
+        "link": "https://huggingface.co/Sucial/MSST-WebUI/resolve/main/All_Models/VR_Models/MGM_LOWEND_A_v4.pth",
+        "model_type": "vr",
+        "stems": [
+            "Instrumental",
+            "Vocals"
+        ]
     },
     "MGM_LOWEND_B_v4.pth": {
         "model_class": "VR_Models",
@@ -239,7 +341,12 @@
         "primary_stem": "Instrumental",
         "secondary_stem": "Vocals",
         "vr_model_param": "1band_sr33075_hl384",
-        "link": "https://huggingface.co/Sucial/MSST-WebUI/resolve/main/All_Models/VR_Models/MGM_LOWEND_B_v4.pth"
+        "link": "https://huggingface.co/Sucial/MSST-WebUI/resolve/main/All_Models/VR_Models/MGM_LOWEND_B_v4.pth",
+        "model_type": "vr",
+        "stems": [
+            "Instrumental",
+            "Vocals"
+        ]
     },
     "MGM_MAIN_v4.pth": {
         "model_class": "VR_Models",
@@ -251,7 +358,12 @@
         "primary_stem": "Instrumental",
         "secondary_stem": "Vocals",
         "vr_model_param": "1band_sr44100_hl512",
-        "link": "https://huggingface.co/Sucial/MSST-WebUI/resolve/main/All_Models/VR_Models/MGM_MAIN_v4.pth"
+        "link": "https://huggingface.co/Sucial/MSST-WebUI/resolve/main/All_Models/VR_Models/MGM_MAIN_v4.pth",
+        "model_type": "vr",
+        "stems": [
+            "Instrumental",
+            "Vocals"
+        ]
     },
     "UVR-BVE-4B_SN-44100-1.pth": {
         "model_class": "VR_Models",
@@ -267,7 +379,14 @@
         "is_bv_model": true,
         "is_bv_model_rebalanced": 0.9,
         "nout": 64,
-        "nout_lstm": 128
+        "nout_lstm": 128,
+        "model_type": "vr",
+        "stems": [
+            "Vocals",
+            "Instrumental"
+        ],
+        "note": "去和声，但是 BVE 的 Vocals 和 Instrumental 是相反的，要注意；输出音频频率砍到了 18k",
+        "rating": "⭐⭐⭐"
     },
     "UVR-De-Echo-Aggressive.pth": {
         "model_class": "VR_Models",
@@ -281,7 +400,14 @@
         "vr_model_param": "4band_v3",
         "link": "https://huggingface.co/Sucial/MSST-WebUI/resolve/main/All_Models/VR_Models/UVR-De-Echo-Aggressive.pth",
         "nout": 48,
-        "nout_lstm": 128
+        "nout_lstm": 128,
+        "model_type": "vr",
+        "stems": [
+            "No Echo",
+            "Echo"
+        ],
+        "note": "去混响延迟，比 Normal 激进",
+        "rating": "⭐⭐⭐"
     },
     "UVR-DeEcho-DeReverb.pth": {
         "model_class": "VR_Models",
@@ -293,7 +419,14 @@
         "primary_stem": "No Reverb",
         "secondary_stem": "Reverb",
         "vr_model_param": "4band_v3",
-        "link": "https://huggingface.co/Sucial/MSST-WebUI/resolve/main/All_Models/VR_Models/UVR-DeEcho-DeReverb.pth"
+        "link": "https://huggingface.co/Sucial/MSST-WebUI/resolve/main/All_Models/VR_Models/UVR-DeEcho-DeReverb.pth",
+        "model_type": "vr",
+        "stems": [
+            "No Reverb",
+            "Reverb"
+        ],
+        "note": "去混响延迟，大混响用这个",
+        "rating": "⭐⭐⭐"
     },
     "UVR-De-Echo-Normal.pth": {
         "model_class": "VR_Models",
@@ -307,7 +440,14 @@
         "vr_model_param": "4band_v3",
         "link": "https://huggingface.co/Sucial/MSST-WebUI/resolve/main/All_Models/VR_Models/UVR-De-Echo-Normal.pth",
         "nout": 48,
-        "nout_lstm": 128
+        "nout_lstm": 128,
+        "model_type": "vr",
+        "stems": [
+            "No Echo",
+            "Echo"
+        ],
+        "note": "去混响延迟，没 Aggressive 激进",
+        "rating": "⭐⭐⭐"
     },
     "UVR-DeNoise.pth": {
         "model_class": "VR_Models",
@@ -321,7 +461,14 @@
         "vr_model_param": "4band_v3",
         "link": "https://huggingface.co/Sucial/MSST-WebUI/resolve/main/All_Models/VR_Models/UVR-DeNoise.pth",
         "nout": 48,
-        "nout_lstm": 128
+        "nout_lstm": 128,
+        "model_type": "vr",
+        "stems": [
+            "Noise",
+            "No Noise"
+        ],
+        "note": "降噪，不如上面的 MSST 模型",
+        "rating": "⭐⭐"
     },
     "UVR-DeNoise-Lite.pth": {
         "model_class": "VR_Models",
@@ -335,7 +482,14 @@
         "vr_model_param": "1band_sr44100_hl1024",
         "link": "https://huggingface.co/Sucial/MSST-WebUI/resolve/main/All_Models/VR_Models/UVR-DeNoise-Lite.pth",
         "nout": 16,
-        "nout_lstm": 128
+        "nout_lstm": 128,
+        "model_type": "vr",
+        "stems": [
+            "Noise",
+            "No Noise"
+        ],
+        "note": "降噪轻量版，更不行了",
+        "rating": "⭐"
     },
     "UVR-DeReverb-aufr33-jarredou_4band_v4_ms_fullband.pth": {
         "model_class": "VR_Models",
@@ -349,7 +503,14 @@
         "vr_model_param": "4band_v4_ms_fullband",
         "link": "https://huggingface.co/Sucial/MSST-WebUI/resolve/main/All_Models/VR_Models/UVR-DeReverb-aufr33-jarredou_4band_v4_ms_fullband.pth",
         "nout": 32,
-        "nout_lstm": 128
+        "nout_lstm": 128,
+        "model_type": "vr",
+        "stems": [
+            "Dry",
+            "Reverb"
+        ],
+        "note": "新的去混响模型",
+        "rating": "⭐⭐⭐⭐"
     },
     "Harmonic_Noise_Separation_yxlllc.pth": {
         "model_class": "VR_Models",
@@ -361,7 +522,14 @@
         "primary_stem": "No Aspiration",
         "secondary_stem": "Aspiration",
         "vr_model_param": "1band_sr44100_hl1024",
-        "link": "https://huggingface.co/Sucial/MSST-WebUI/resolve/main/All_Models/VR_Models/Harmonic_Noise_Separation_yxlllc.pth"
+        "link": "https://huggingface.co/Sucial/MSST-WebUI/resolve/main/All_Models/VR_Models/Harmonic_Noise_Separation_yxlllc.pth",
+        "model_type": "vr",
+        "stems": [
+            "No Aspiration",
+            "Aspiration"
+        ],
+        "note": "yxlllc 大佬训练的气声分离模型，速度更快，效果更好",
+        "rating": "⭐⭐⭐⭐⭐"
     },
     "aufr33-jarredou_DrumSep_model_mdx23c_ep_141_sdr_10.8059.ckpt": {
         "model_class": "multi_stem_models",
@@ -371,7 +539,18 @@
         "is_installed": false,
         "target_position": "./pretrain/multi_stem_models/aufr33-jarredou_DrumSep_model_mdx23c_ep_141_sdr_10.8059.ckpt",
         "model_type": "mdx23c",
-        "link": "https://huggingface.co/Sucial/MSST-WebUI/resolve/main/All_Models/multi_stem_models/aufr33-jarredou_DrumSep_model_mdx23c_ep_141_sdr_10.8059.ckpt"
+        "link": "https://huggingface.co/Sucial/MSST-WebUI/resolve/main/All_Models/multi_stem_models/aufr33-jarredou_DrumSep_model_mdx23c_ep_141_sdr_10.8059.ckpt",
+        "stems": [
+            "kick",
+            "snare",
+            "toms",
+            "hh",
+            "ride",
+            "crash"
+        ],
+        "size": "417.38 MB",
+        "note": "用来细分提取出来的 drums",
+        "rating": "⭐⭐⭐⭐"
     },
     "model_bandit_plus_dnr_sdr_11.47.chpt": {
         "model_class": "multi_stem_models",
@@ -381,7 +560,15 @@
         "is_installed": false,
         "target_position": "./pretrain/multi_stem_models/model_bandit_plus_dnr_sdr_11.47.chpt",
         "model_type": "bandit",
-        "link": "https://huggingface.co/Sucial/MSST-WebUI/resolve/main/All_Models/multi_stem_models/model_bandit_plus_dnr_sdr_11.47.chpt"
+        "link": "https://huggingface.co/Sucial/MSST-WebUI/resolve/main/All_Models/multi_stem_models/model_bandit_plus_dnr_sdr_11.47.chpt",
+        "stems": [
+            "speech",
+            "music",
+            "effects"
+        ],
+        "size": "141.99 MB",
+        "note": "可以提取带有背景音乐的说话声，以及特效音；提出来的说话声效果一般，但是能去掉特效音",
+        "rating": "⭐⭐⭐⭐"
     },
     "model_drumsep.th": {
         "model_class": "multi_stem_models",
@@ -391,7 +578,15 @@
         "is_installed": false,
         "target_position": "./pretrain/multi_stem_models/model_drumsep.th",
         "model_type": "htdemucs",
-        "link": "https://huggingface.co/Sucial/MSST-WebUI/resolve/main/All_Models/multi_stem_models/model_drumsep.th"
+        "link": "https://huggingface.co/Sucial/MSST-WebUI/resolve/main/All_Models/multi_stem_models/model_drumsep.th",
+        "stems": [
+            "kick",
+            "snare",
+            "cybals",
+            "toms"
+        ],
+        "size": "159.65 MB",
+        "note": "用来细分提取出来的 drums"
     },
     "model_mdx23c_ep_168_sdr_7.0207.ckpt": {
         "model_class": "multi_stem_models",
@@ -401,7 +596,15 @@
         "is_installed": false,
         "target_position": "./pretrain/multi_stem_models/model_mdx23c_ep_168_sdr_7.0207.ckpt",
         "model_type": "mdx23c",
-        "link": "https://huggingface.co/Sucial/MSST-WebUI/resolve/main/All_Models/multi_stem_models/model_mdx23c_ep_168_sdr_7.0207.ckpt"
+        "link": "https://huggingface.co/Sucial/MSST-WebUI/resolve/main/All_Models/multi_stem_models/model_mdx23c_ep_168_sdr_7.0207.ckpt",
+        "stems": [
+            "vocals",
+            "bass",
+            "drums",
+            "other"
+        ],
+        "size": "427.36 MB",
+        "note": "提取多轨的 MDX23C"
     },
     "scnet_checkpoint_musdb18.ckpt": {
         "model_class": "multi_stem_models",
@@ -411,7 +614,14 @@
         "is_installed": false,
         "target_position": "./pretrain/multi_stem_models/scnet_checkpoint_musdb18.ckpt",
         "model_type": "scnet",
-        "link": "https://huggingface.co/Sucial/MSST-WebUI/resolve/main/All_Models/multi_stem_models/scnet_checkpoint_musdb18.ckpt"
+        "link": "https://huggingface.co/Sucial/MSST-WebUI/resolve/main/All_Models/multi_stem_models/scnet_checkpoint_musdb18.ckpt",
+        "stems": [
+            "drums",
+            "bass",
+            "other",
+            "vocals"
+        ],
+        "size": "40.47 MB"
     },
     "HTDemucs4.th": {
         "model_class": "multi_stem_models",
@@ -421,7 +631,16 @@
         "is_installed": false,
         "target_position": "./pretrain/multi_stem_models/HTDemucs4.th",
         "model_type": "htdemucs",
-        "link": "https://huggingface.co/Sucial/MSST-WebUI/resolve/main/All_Models/multi_stem_models/HTDemucs4.th"
+        "link": "https://huggingface.co/Sucial/MSST-WebUI/resolve/main/All_Models/multi_stem_models/HTDemucs4.th",
+        "stems": [
+            "drums",
+            "bass",
+            "other",
+            "vocals"
+        ],
+        "size": "80.24 MB",
+        "note": "提取多轨可以使用",
+        "rating": "⭐⭐⭐⭐"
     },
     "HTDemucs4_6stems.th": {
         "model_class": "multi_stem_models",
@@ -431,7 +650,18 @@
         "is_installed": false,
         "target_position": "./pretrain/multi_stem_models/HTDemucs4_6stems.th",
         "model_type": "htdemucs",
-        "link": "https://huggingface.co/Sucial/MSST-WebUI/resolve/main/All_Models/multi_stem_models/HTDemucs4_6stems.th"
+        "link": "https://huggingface.co/Sucial/MSST-WebUI/resolve/main/All_Models/multi_stem_models/HTDemucs4_6stems.th",
+        "stems": [
+            "drums",
+            "bass",
+            "other",
+            "vocals",
+            "guitar",
+            "piano"
+        ],
+        "size": "52.45 MB",
+        "note": "提取多轨可以使用，拆的最多，一共 6 轨，最推荐",
+        "rating": "⭐⭐⭐⭐⭐"
     },
     "model_scnet_sdr_9.3244.ckpt": {
         "model_class": "multi_stem_models",
@@ -441,7 +671,14 @@
         "is_installed": false,
         "target_position": "./pretrain/multi_stem_models/model_scnet_sdr_9.3244.ckpt",
         "model_type": "scnet",
-        "link": "https://huggingface.co/Sucial/MSST-WebUI/resolve/main/All_Models/multi_stem_models/model_scnet_sdr_9.3244.ckpt"
+        "link": "https://huggingface.co/Sucial/MSST-WebUI/resolve/main/All_Models/multi_stem_models/model_scnet_sdr_9.3244.ckpt",
+        "stems": [
+            "drums",
+            "bass",
+            "other",
+            "vocals"
+        ],
+        "size": "161.05 MB"
     },
     "bs_roformer_4stems_ft.ckpt": {
         "model_class": "multi_stem_models",
@@ -451,7 +688,15 @@
         "is_installed": false,
         "target_position": "./pretrain/multi_stem_models/bs_roformer_4stems_ft.ckpt",
         "model_type": "bs_roformer",
-        "link": "https://huggingface.co/Sucial/MSST-WebUI/resolve/main/All_Models/multi_stem_models/bs_roformer_4stems_ft.ckpt"
+        "link": "https://huggingface.co/Sucial/MSST-WebUI/resolve/main/All_Models/multi_stem_models/bs_roformer_4stems_ft.ckpt",
+        "stems": [
+            "drums",
+            "bass",
+            "other",
+            "vocals"
+        ],
+        "size": "502.82 MB",
+        "note": "微调后的 4 轨拆分 bs_roformer 模型"
     },
     "HTDemucs4_FT_bass.th": {
         "model_class": "single_stem_models",
@@ -461,7 +706,15 @@
         "is_installed": false,
         "target_position": "./pretrain/single_stem_models/HTDemucs4_FT_bass.th",
         "model_type": "htdemucs",
-        "link": "https://huggingface.co/Sucial/MSST-WebUI/resolve/main/All_Models/single_stem_models/HTDemucs4_FT_bass.th"
+        "link": "https://huggingface.co/Sucial/MSST-WebUI/resolve/main/All_Models/single_stem_models/HTDemucs4_FT_bass.th",
+        "stems": [
+            "drums",
+            "bass",
+            "other",
+            "vocals"
+        ],
+        "size": "80.24 MB",
+        "note": "输出结果中 bass 质量最高"
     },
     "HTDemucs4_FT_drums.th": {
         "model_class": "single_stem_models",
@@ -471,7 +724,15 @@
         "is_installed": false,
         "target_position": "./pretrain/single_stem_models/HTDemucs4_FT_drums.th",
         "model_type": "htdemucs",
-        "link": "https://huggingface.co/Sucial/MSST-WebUI/resolve/main/All_Models/single_stem_models/HTDemucs4_FT_drums.th"
+        "link": "https://huggingface.co/Sucial/MSST-WebUI/resolve/main/All_Models/single_stem_models/HTDemucs4_FT_drums.th",
+        "stems": [
+            "drums",
+            "bass",
+            "other",
+            "vocals"
+        ],
+        "size": "80.24 MB",
+        "note": "输出结果中 drums 质量最高"
     },
     "HTDemucs4_FT_other.th": {
         "model_class": "single_stem_models",
@@ -481,7 +742,15 @@
         "is_installed": false,
         "target_position": "./pretrain/single_stem_models/HTDemucs4_FT_other.th",
         "model_type": "htdemucs",
-        "link": "https://huggingface.co/Sucial/MSST-WebUI/resolve/main/All_Models/single_stem_models/HTDemucs4_FT_other.th"
+        "link": "https://huggingface.co/Sucial/MSST-WebUI/resolve/main/All_Models/single_stem_models/HTDemucs4_FT_other.th",
+        "stems": [
+            "drums",
+            "bass",
+            "other",
+            "vocals"
+        ],
+        "size": "80.24 MB",
+        "note": "输出结果中 other 质量最高"
     },
     "HTDemucs4_FT_vocals_official.th": {
         "model_class": "single_stem_models",
@@ -491,7 +760,15 @@
         "is_installed": false,
         "target_position": "./pretrain/single_stem_models/HTDemucs4_FT_vocals_official.th",
         "model_type": "htdemucs",
-        "link": "https://huggingface.co/Sucial/MSST-WebUI/resolve/main/All_Models/single_stem_models/HTDemucs4_FT_vocals_official.th"
+        "link": "https://huggingface.co/Sucial/MSST-WebUI/resolve/main/All_Models/single_stem_models/HTDemucs4_FT_vocals_official.th",
+        "stems": [
+            "drums",
+            "bass",
+            "other",
+            "vocals"
+        ],
+        "size": "80.24 MB",
+        "note": "输出结果中 vocals 质量最高"
     },
     "mel_band_roformer_crowd_aufr33_viperx_sdr_8.7144.ckpt": {
         "model_class": "single_stem_models",
@@ -501,7 +778,13 @@
         "is_installed": false,
         "target_position": "./pretrain/single_stem_models/mel_band_roformer_crowd_aufr33_viperx_sdr_8.7144.ckpt",
         "model_type": "mel_band_roformer",
-        "link": "https://huggingface.co/Sucial/MSST-WebUI/resolve/main/All_Models/single_stem_models/mel_band_roformer_crowd_aufr33_viperx_sdr_8.7144.ckpt"
+        "link": "https://huggingface.co/Sucial/MSST-WebUI/resolve/main/All_Models/single_stem_models/mel_band_roformer_crowd_aufr33_viperx_sdr_8.7144.ckpt",
+        "stems": [
+            "crowd",
+            "other"
+        ],
+        "size": "870.8 MB",
+        "note": "此处的 crowd 指嘈杂声"
     },
     "model_bs_roformer_ep_937_sdr_10.5309.ckpt": {
         "model_class": "single_stem_models",
@@ -511,7 +794,14 @@
         "is_installed": false,
         "target_position": "./pretrain/single_stem_models/model_bs_roformer_ep_937_sdr_10.5309.ckpt",
         "model_type": "bs_roformer",
-        "link": "https://huggingface.co/Sucial/MSST-WebUI/resolve/main/All_Models/single_stem_models/model_bs_roformer_ep_937_sdr_10.5309.ckpt"
+        "link": "https://huggingface.co/Sucial/MSST-WebUI/resolve/main/All_Models/single_stem_models/model_bs_roformer_ep_937_sdr_10.5309.ckpt",
+        "stems": [
+            "other",
+            "vocals"
+        ],
+        "size": "374.86 MB",
+        "note": "一般，但是比 UVR 好",
+        "rating": "⭐⭐⭐"
     },
     "denoise_mel_band_roformer_aufr33_sdr_27.9959.ckpt": {
         "model_class": "single_stem_models",
@@ -521,7 +811,14 @@
         "is_installed": false,
         "target_position": "./pretrain/single_stem_models/denoise_mel_band_roformer_aufr33_sdr_27.9959.ckpt",
         "model_type": "mel_band_roformer",
-        "link": "https://huggingface.co/Sucial/MSST-WebUI/resolve/main/All_Models/single_stem_models/denoise_mel_band_roformer_aufr33_sdr_27.9959.ckpt"
+        "link": "https://huggingface.co/Sucial/MSST-WebUI/resolve/main/All_Models/single_stem_models/denoise_mel_band_roformer_aufr33_sdr_27.9959.ckpt",
+        "stems": [
+            "dry",
+            "other"
+        ],
+        "size": "870.8 MB",
+        "note": "最新的降噪模型，推荐",
+        "rating": "⭐⭐⭐⭐⭐"
     },
     "denoise_mel_band_roformer_aufr33_aggr_sdr_27.9768.ckpt": {
         "model_class": "single_stem_models",
@@ -531,7 +828,14 @@
         "is_installed": false,
         "target_position": "./pretrain/single_stem_models/denoise_mel_band_roformer_aufr33_aggr_sdr_27.9768.ckpt",
         "model_type": "mel_band_roformer",
-        "link": "https://huggingface.co/Sucial/MSST-WebUI/resolve/main/All_Models/single_stem_models/denoise_mel_band_roformer_aufr33_aggr_sdr_27.9768.ckpt"
+        "link": "https://huggingface.co/Sucial/MSST-WebUI/resolve/main/All_Models/single_stem_models/denoise_mel_band_roformer_aufr33_aggr_sdr_27.9768.ckpt",
+        "stems": [
+            "dry",
+            "other"
+        ],
+        "size": "870.8 MB",
+        "note": "比上面的降噪激进一点",
+        "rating": "⭐⭐⭐⭐⭐"
     },
     "deverb_mel_band_roformer_ep_27_sdr_10.4567.ckpt": {
         "model_class": "single_stem_models",
@@ -541,7 +845,14 @@
         "is_installed": false,
         "target_position": "./pretrain/single_stem_models/deverb_mel_band_roformer_ep_27_sdr_10.4567.ckpt",
         "model_type": "mel_band_roformer",
-        "link": "https://huggingface.co/Sucial/MSST-WebUI/resolve/main/All_Models/single_stem_models/deverb_mel_band_roformer_ep_27_sdr_10.4567.ckpt"
+        "link": "https://huggingface.co/Sucial/MSST-WebUI/resolve/main/All_Models/single_stem_models/deverb_mel_band_roformer_ep_27_sdr_10.4567.ckpt",
+        "stems": [
+            "noreverb",
+            "reverb"
+        ],
+        "size": "466.9 MB",
+        "note": "去混响效果不如下面的 deverb_bs_roformer",
+        "rating": "⭐⭐⭐⭐"
     },
     "deverb_bs_roformer_8_256dim_8depth.ckpt": {
         "model_class": "single_stem_models",
@@ -551,7 +862,14 @@
         "is_installed": false,
         "target_position": "./pretrain/single_stem_models/deverb_bs_roformer_8_256dim_8depth.ckpt",
         "model_type": "bs_roformer",
-        "link": "https://huggingface.co/Sucial/MSST-WebUI/resolve/main/All_Models/single_stem_models/deverb_bs_roformer_8_256dim_8depth.ckpt"
+        "link": "https://huggingface.co/Sucial/MSST-WebUI/resolve/main/All_Models/single_stem_models/deverb_bs_roformer_8_256dim_8depth.ckpt",
+        "stems": [
+            "noreverb",
+            "reverb"
+        ],
+        "size": "162.86 MB",
+        "note": "去混响首选；也能去除部分和声；但是无法去延迟",
+        "rating": "⭐⭐⭐⭐⭐"
     },
     "deverb_bs_roformer_8_384dim_10depth.ckpt": {
         "model_class": "single_stem_models",
@@ -561,7 +879,14 @@
         "is_installed": false,
         "target_position": "./pretrain/single_stem_models/deverb_bs_roformer_8_384dim_10depth.ckpt",
         "model_type": "bs_roformer",
-        "link": "https://huggingface.co/Sucial/MSST-WebUI/resolve/main/All_Models/single_stem_models/deverb_bs_roformer_8_384dim_10depth.ckpt"
+        "link": "https://huggingface.co/Sucial/MSST-WebUI/resolve/main/All_Models/single_stem_models/deverb_bs_roformer_8_384dim_10depth.ckpt",
+        "stems": [
+            "noreverb",
+            "reverb"
+        ],
+        "size": "344.75 MB",
+        "note": "比上面那个激进一点点，不过基本听不出差别",
+        "rating": "⭐⭐⭐⭐⭐"
     },
     "dereverb_mdx23c_sdr_6.9096.ckpt": {
         "model_class": "single_stem_models",
@@ -571,7 +896,13 @@
         "is_installed": false,
         "target_position": "./pretrain/single_stem_models/dereverb_mdx23c_sdr_6.9096.ckpt",
         "model_type": "mdx23c",
-        "link": "https://huggingface.co/Sucial/MSST-WebUI/resolve/main/All_Models/single_stem_models/dereverb_mdx23c_sdr_6.9096.ckpt"
+        "link": "https://huggingface.co/Sucial/MSST-WebUI/resolve/main/All_Models/single_stem_models/dereverb_mdx23c_sdr_6.9096.ckpt",
+        "stems": [
+            "dry",
+            "other"
+        ],
+        "size": "427.34 MB",
+        "note": "去混响，比 bs_roformer 那两个少激进得多"
     },
     "dereverb_mel_band_roformer_anvuew_sdr_19.1729.ckpt": {
         "model_class": "single_stem_models",
@@ -581,7 +912,14 @@
         "is_installed": false,
         "target_position": "./pretrain/single_stem_models/dereverb_mel_band_roformer_anvuew_sdr_19.1729.ckpt",
         "model_type": "mel_band_roformer",
-        "link": "https://huggingface.co/Sucial/MSST-WebUI/resolve/main/All_Models/single_stem_models/dereverb_mel_band_roformer_anvuew_sdr_19.1729.ckpt"
+        "link": "https://huggingface.co/Sucial/MSST-WebUI/resolve/main/All_Models/single_stem_models/dereverb_mel_band_roformer_anvuew_sdr_19.1729.ckpt",
+        "stems": [
+            "noreverb",
+            "reverb"
+        ],
+        "size": "870.81 MB",
+        "note": "分离混响推荐；不支持分离单声道混响",
+        "rating": "⭐⭐⭐⭐⭐"
     },
     "dereverb_mel_band_roformer_less_aggressive_anvuew_sdr_18.8050.ckpt": {
         "model_class": "single_stem_models",
@@ -591,7 +929,14 @@
         "is_installed": false,
         "target_position": "./pretrain/single_stem_models/dereverb_mel_band_roformer_less_aggressive_anvuew_sdr_18.8050.ckpt",
         "model_type": "mel_band_roformer",
-        "link": "https://huggingface.co/Sucial/MSST-WebUI/resolve/main/All_Models/single_stem_models/dereverb_mel_band_roformer_less_aggressive_anvuew_sdr_18.8050.ckpt"
+        "link": "https://huggingface.co/Sucial/MSST-WebUI/resolve/main/All_Models/single_stem_models/dereverb_mel_band_roformer_less_aggressive_anvuew_sdr_18.8050.ckpt",
+        "stems": [
+            "noreverb",
+            "reverb"
+        ],
+        "size": "870.81 MB",
+        "note": "比上面那个少激进一点；不支持分离单声道混响",
+        "rating": "⭐⭐⭐⭐⭐"
     },
     "Apollo_LQ_MP3_restoration.ckpt": {
         "model_class": "single_stem_models",
@@ -601,7 +946,14 @@
         "is_installed": false,
         "target_position": "./pretrain/single_stem_models/Apollo_LQ_MP3_restoration.ckpt",
         "model_type": "apollo",
-        "link": "https://huggingface.co/Sucial/MSST-WebUI/resolve/main/All_Models/single_stem_models/Apollo_LQ_MP3_restoration.ckpt"
+        "link": "https://huggingface.co/Sucial/MSST-WebUI/resolve/main/All_Models/single_stem_models/Apollo_LQ_MP3_restoration.ckpt",
+        "stems": [
+            "restored",
+            "addition"
+        ],
+        "size": "63.46 MB",
+        "note": "用于修复 mp3 格式音频的音质，修复至 44.1kHz",
+        "rating": "⭐⭐⭐⭐"
     },
     "aspiration_mel_band_roformer_sdr_18.9845.ckpt": {
         "model_class": "single_stem_models",
@@ -611,7 +963,14 @@
         "is_installed": false,
         "target_position": "./pretrain/single_stem_models/aspiration_mel_band_roformer_sdr_18.9845.ckpt",
         "model_type": "mel_band_roformer",
-        "link": "https://huggingface.co/Sucial/MSST-WebUI/resolve/main/All_Models/single_stem_models/aspiration_mel_band_roformer_sdr_18.9845.ckpt"
+        "link": "https://huggingface.co/Sucial/MSST-WebUI/resolve/main/All_Models/single_stem_models/aspiration_mel_band_roformer_sdr_18.9845.ckpt",
+        "stems": [
+            "aspiration",
+            "other"
+        ],
+        "size": "797.26 MB",
+        "note": "气声分离模型，是气声不是呼吸声",
+        "rating": "⭐⭐⭐⭐"
     },
     "aspiration_mel_band_roformer_less_aggr_sdr_18.1201.ckpt": {
         "model_class": "single_stem_models",
@@ -621,7 +980,14 @@
         "is_installed": false,
         "target_position": "./pretrain/single_stem_models/aspiration_mel_band_roformer_less_aggr_sdr_18.1201.ckpt",
         "model_type": "mel_band_roformer",
-        "link": "https://huggingface.co/Sucial/MSST-WebUI/resolve/main/All_Models/single_stem_models/aspiration_mel_band_roformer_less_aggr_sdr_18.1201.ckpt"
+        "link": "https://huggingface.co/Sucial/MSST-WebUI/resolve/main/All_Models/single_stem_models/aspiration_mel_band_roformer_less_aggr_sdr_18.1201.ckpt",
+        "stems": [
+            "aspiration",
+            "other"
+        ],
+        "size": "797.26 MB",
+        "note": "气声分离模型，比上面一个少激进，但效果会略差",
+        "rating": "⭐⭐⭐⭐"
     },
     "model_mdx23c_ep_271_l1_freq_72.2383.ckpt": {
         "model_class": "single_stem_models",
@@ -631,7 +997,13 @@
         "is_installed": false,
         "target_position": "./pretrain/single_stem_models/model_mdx23c_ep_271_l1_freq_72.2383.ckpt",
         "model_type": "mdx23c",
-        "link": "https://huggingface.co/Sucial/MSST-WebUI/resolve/main/All_Models/single_stem_models/model_mdx23c_ep_271_l1_freq_72.2383.ckpt"
+        "link": "https://huggingface.co/Sucial/MSST-WebUI/resolve/main/All_Models/single_stem_models/model_mdx23c_ep_271_l1_freq_72.2383.ckpt",
+        "stems": [
+            "similarity",
+            "difference"
+        ],
+        "size": "417.34 MB",
+        "note": "中置声道提取，可以提取歌曲的 mid 和 side，实际用途不大"
     },
     "dereverb_echo_mbr_fused_0.5_v2_0.25_big_0.25_super.ckpt": {
         "model_class": "single_stem_models",
@@ -641,7 +1013,14 @@
         "is_installed": false,
         "target_position": "./pretrain/single_stem_models/dereverb_echo_mbr_fused_0.5_v2_0.25_big_0.25_super.ckpt",
         "model_type": "mel_band_roformer",
-        "link": "https://huggingface.co/Sucial/MSST-WebUI/resolve/main/All_Models/single_stem_models/dereverb_echo_mbr_fused_0.5_v2_0.25_big_0.25_super.ckpt"
+        "link": "https://huggingface.co/Sucial/MSST-WebUI/resolve/main/All_Models/single_stem_models/dereverb_echo_mbr_fused_0.5_v2_0.25_big_0.25_super.ckpt",
+        "stems": [
+            "dry",
+            "other"
+        ],
+        "size": "434.66 MB",
+        "note": "同时去除混响和延迟的模型；效果略差于 anvuew 模型；不支持分离单声道混响",
+        "rating": "⭐⭐⭐⭐"
     },
     "de_big_reverb_mbr_ep_362.ckpt": {
         "model_class": "single_stem_models",
@@ -651,7 +1030,13 @@
         "is_installed": false,
         "target_position": "./pretrain/single_stem_models/de_big_reverb_mbr_ep_362.ckpt",
         "model_type": "mel_band_roformer",
-        "link": "https://huggingface.co/Sucial/MSST-WebUI/resolve/main/All_Models/single_stem_models/de_big_reverb_mbr_ep_362.ckpt"
+        "link": "https://huggingface.co/Sucial/MSST-WebUI/resolve/main/All_Models/single_stem_models/de_big_reverb_mbr_ep_362.ckpt",
+        "stems": [
+            "dry",
+            "other"
+        ],
+        "size": "434.66 MB",
+        "note": "去除大混响的模型，遇到大混响去除不了时可以尝试；不支持分离单声道混响"
     },
     "apollo_model_uni.ckpt": {
         "model_class": "single_stem_models",
@@ -661,7 +1046,13 @@
         "is_installed": false,
         "target_position": "./pretrain/single_stem_models/apollo_model_uni.ckpt",
         "model_type": "apollo",
-        "link": "https://huggingface.co/Sucial/MSST-WebUI/resolve/main/All_Models/single_stem_models/apollo_model_uni.ckpt"
+        "link": "https://huggingface.co/Sucial/MSST-WebUI/resolve/main/All_Models/single_stem_models/apollo_model_uni.ckpt",
+        "stems": [
+            "restored",
+            "addition"
+        ],
+        "size": "140.06 MB",
+        "note": "针对人声的 apollo 音频修复模型，但实际效果一般"
     },
     "model_bs_roformer_ep_317_sdr_12.9755.ckpt": {
         "model_class": "vocal_models",
@@ -671,7 +1062,14 @@
         "is_installed": false,
         "target_position": "./pretrain/vocal_models/model_bs_roformer_ep_317_sdr_12.9755.ckpt",
         "model_type": "bs_roformer",
-        "link": "https://huggingface.co/Sucial/MSST-WebUI/resolve/main/All_Models/vocal_models/model_bs_roformer_ep_317_sdr_12.9755.ckpt"
+        "link": "https://huggingface.co/Sucial/MSST-WebUI/resolve/main/All_Models/vocal_models/model_bs_roformer_ep_317_sdr_12.9755.ckpt",
+        "stems": [
+            "vocals",
+            "instrumental"
+        ],
+        "size": "609.71 MB",
+        "note": "1297 提取出来的音频极高频有点问题，但是 SDR 值高，可以使用",
+        "rating": "⭐⭐⭐⭐⭐"
     },
     "model_mel_band_roformer_ep_3005_sdr_11.4360.ckpt": {
         "model_class": "vocal_models",
@@ -681,7 +1079,14 @@
         "is_installed": false,
         "target_position": "./pretrain/vocal_models/model_mel_band_roformer_ep_3005_sdr_11.4360.ckpt",
         "model_type": "mel_band_roformer",
-        "link": "https://huggingface.co/Sucial/MSST-WebUI/resolve/main/All_Models/vocal_models/model_mel_band_roformer_ep_3005_sdr_11.4360.ckpt"
+        "link": "https://huggingface.co/Sucial/MSST-WebUI/resolve/main/All_Models/vocal_models/model_mel_band_roformer_ep_3005_sdr_11.4360.ckpt",
+        "stems": [
+            "vocals",
+            "instrumental"
+        ],
+        "size": "961.13 MB",
+        "note": "可以用来做微调训练的底模",
+        "rating": "⭐⭐⭐⭐"
     },
     "model_swin_upernet_ep_56_sdr_10.6703.ckpt": {
         "model_class": "vocal_models",
@@ -691,7 +1096,13 @@
         "is_installed": false,
         "target_position": "./pretrain/vocal_models/model_swin_upernet_ep_56_sdr_10.6703.ckpt",
         "model_type": "swin_upernet",
-        "link": "https://huggingface.co/Sucial/MSST-WebUI/resolve/main/All_Models/vocal_models/model_swin_upernet_ep_56_sdr_10.6703.ckpt"
+        "link": "https://huggingface.co/Sucial/MSST-WebUI/resolve/main/All_Models/vocal_models/model_swin_upernet_ep_56_sdr_10.6703.ckpt",
+        "stems": [
+            "vocals",
+            "instrumental"
+        ],
+        "size": "896.36 MB",
+        "note": "第一次使用此模型会从 Hugging Face 下载预训练底模"
     },
     "model_vocals_htdemucs_sdr_8.78.ckpt": {
         "model_class": "vocal_models",
@@ -701,7 +1112,12 @@
         "is_installed": false,
         "target_position": "./pretrain/vocal_models/model_vocals_htdemucs_sdr_8.78.ckpt",
         "model_type": "htdemucs",
-        "link": "https://huggingface.co/Sucial/MSST-WebUI/resolve/main/All_Models/vocal_models/model_vocals_htdemucs_sdr_8.78.ckpt"
+        "link": "https://huggingface.co/Sucial/MSST-WebUI/resolve/main/All_Models/vocal_models/model_vocals_htdemucs_sdr_8.78.ckpt",
+        "stems": [
+            "vocals",
+            "instrumental"
+        ],
+        "size": "160.34 MB"
     },
     "model_vocals_mdx23c_sdr_10.17.ckpt": {
         "model_class": "vocal_models",
@@ -711,7 +1127,14 @@
         "is_installed": false,
         "target_position": "./pretrain/vocal_models/model_vocals_mdx23c_sdr_10.17.ckpt",
         "model_type": "mdx23c",
-        "link": "https://huggingface.co/Sucial/MSST-WebUI/resolve/main/All_Models/vocal_models/model_vocals_mdx23c_sdr_10.17.ckpt"
+        "link": "https://huggingface.co/Sucial/MSST-WebUI/resolve/main/All_Models/vocal_models/model_vocals_mdx23c_sdr_10.17.ckpt",
+        "stems": [
+            "vocals",
+            "instrumental"
+        ],
+        "size": "427.34 MB",
+        "note": "MDX23C 老人声提取模型，已经不如 bs_roformer",
+        "rating": "⭐⭐⭐⭐"
     },
     "model_vocals_mel_band_roformer_sdr_8.42.ckpt": {
         "model_class": "vocal_models",
@@ -721,7 +1144,12 @@
         "is_installed": false,
         "target_position": "./pretrain/vocal_models/model_vocals_mel_band_roformer_sdr_8.42.ckpt",
         "model_type": "mel_band_roformer",
-        "link": "https://huggingface.co/Sucial/MSST-WebUI/resolve/main/All_Models/vocal_models/model_vocals_mel_band_roformer_sdr_8.42.ckpt"
+        "link": "https://huggingface.co/Sucial/MSST-WebUI/resolve/main/All_Models/vocal_models/model_vocals_mel_band_roformer_sdr_8.42.ckpt",
+        "stems": [
+            "vocals",
+            "instrumental"
+        ],
+        "size": "128.67 MB"
     },
     "model_vocals_segm_models_sdr_9.77.ckpt": {
         "model_class": "vocal_models",
@@ -731,7 +1159,13 @@
         "is_installed": false,
         "target_position": "./pretrain/vocal_models/model_vocals_segm_models_sdr_9.77.ckpt",
         "model_type": "segm_models",
-        "link": "https://huggingface.co/Sucial/MSST-WebUI/resolve/main/All_Models/vocal_models/model_vocals_segm_models_sdr_9.77.ckpt"
+        "link": "https://huggingface.co/Sucial/MSST-WebUI/resolve/main/All_Models/vocal_models/model_vocals_segm_models_sdr_9.77.ckpt",
+        "stems": [
+            "vocals",
+            "instrumental"
+        ],
+        "size": "823.67 MB",
+        "note": "第一次使用此模型会从 Hugging Face 下载预训练底模"
     },
     "model_bs_roformer_ep_368_sdr_12.9628.ckpt": {
         "model_class": "vocal_models",
@@ -741,7 +1175,14 @@
         "is_installed": false,
         "target_position": "./pretrain/vocal_models/model_bs_roformer_ep_368_sdr_12.9628.ckpt",
         "model_type": "bs_roformer",
-        "link": "https://huggingface.co/Sucial/MSST-WebUI/resolve/main/All_Models/vocal_models/model_bs_roformer_ep_368_sdr_12.9628.ckpt"
+        "link": "https://huggingface.co/Sucial/MSST-WebUI/resolve/main/All_Models/vocal_models/model_bs_roformer_ep_368_sdr_12.9628.ckpt",
+        "stems": [
+            "vocals",
+            "instrumental"
+        ],
+        "size": "609.7 MB",
+        "note": "分离人声伴奏推荐使用",
+        "rating": "⭐⭐⭐⭐⭐"
     },
     "model_mel_band_roformer_karaoke_aufr33_viperx_sdr_10.1956.ckpt": {
         "model_class": "vocal_models",
@@ -751,7 +1192,14 @@
         "is_installed": false,
         "target_position": "./pretrain/vocal_models/model_mel_band_roformer_karaoke_aufr33_viperx_sdr_10.1956.ckpt",
         "model_type": "mel_band_roformer",
-        "link": "https://huggingface.co/Sucial/MSST-WebUI/resolve/main/All_Models/vocal_models/model_mel_band_roformer_karaoke_aufr33_viperx_sdr_10.1956.ckpt"
+        "link": "https://huggingface.co/Sucial/MSST-WebUI/resolve/main/All_Models/vocal_models/model_mel_band_roformer_karaoke_aufr33_viperx_sdr_10.1956.ckpt",
+        "stems": [
+            "karaoke",
+            "other"
+        ],
+        "size": "870.8 MB",
+        "note": "分离和声模型；如果是原曲放进去，出来的就是带和声伴奏",
+        "rating": "⭐⭐⭐⭐⭐"
     },
     "Kim_MelBandRoformer.ckpt": {
         "model_class": "vocal_models",
@@ -761,7 +1209,14 @@
         "is_installed": false,
         "target_position": "./pretrain/vocal_models/Kim_MelBandRoformer.ckpt",
         "model_type": "mel_band_roformer",
-        "link": "https://huggingface.co/Sucial/MSST-WebUI/resolve/main/All_Models/vocal_models/Kim_MelBandRoformer.ckpt"
+        "link": "https://huggingface.co/Sucial/MSST-WebUI/resolve/main/All_Models/vocal_models/Kim_MelBandRoformer.ckpt",
+        "stems": [
+            "vocals",
+            "instrumental"
+        ],
+        "size": "870.81 MB",
+        "note": "Kim 的模型，效果比 1296 差一点，但是速度更快",
+        "rating": "⭐⭐⭐⭐⭐"
     },
     "kimmel_unwa_ft.ckpt": {
         "model_class": "vocal_models",
@@ -771,7 +1226,14 @@
         "is_installed": false,
         "target_position": "./pretrain/vocal_models/kimmel_unwa_ft.ckpt",
         "model_type": "mel_band_roformer",
-        "link": "https://huggingface.co/Sucial/MSST-WebUI/resolve/main/All_Models/vocal_models/kimmel_unwa_ft.ckpt"
+        "link": "https://huggingface.co/Sucial/MSST-WebUI/resolve/main/All_Models/vocal_models/kimmel_unwa_ft.ckpt",
+        "stems": [
+            "vocals",
+            "other"
+        ],
+        "size": "870.8 MB",
+        "note": "Kim_MelBandRoformer 的微调模型，速度较快，分离表现不错",
+        "rating": "⭐⭐⭐⭐⭐"
     },
     "melband_roformer_inst_v2.ckpt": {
         "model_class": "vocal_models",
@@ -781,7 +1243,14 @@
         "is_installed": false,
         "target_position": "./pretrain/vocal_models/melband_roformer_inst_v2.ckpt",
         "model_type": "mel_band_roformer",
-        "link": "https://huggingface.co/Sucial/MSST-WebUI/resolve/main/All_Models/vocal_models/melband_roformer_inst_v2.ckpt"
+        "link": "https://huggingface.co/Sucial/MSST-WebUI/resolve/main/All_Models/vocal_models/melband_roformer_inst_v2.ckpt",
+        "stems": [
+            "other",
+            "vocals"
+        ],
+        "size": "1501.54 MB",
+        "note": "超级大模型，如果 `inst_v1e` 不满意，可以尝试这个 v2 伴奏提取模型",
+        "rating": "⭐⭐⭐⭐⭐"
     },
     "inst_v1e.ckpt": {
         "model_class": "vocal_models",
@@ -791,7 +1260,14 @@
         "is_installed": false,
         "target_position": "./pretrain/vocal_models/inst_v1e.ckpt",
         "model_type": "mel_band_roformer",
-        "link": "https://huggingface.co/Sucial/MSST-WebUI/resolve/main/All_Models/vocal_models/inst_v1e.ckpt"
+        "link": "https://huggingface.co/Sucial/MSST-WebUI/resolve/main/All_Models/vocal_models/inst_v1e.ckpt",
+        "stems": [
+            "other",
+            "vocals"
+        ],
+        "size": "870.8 MB",
+        "note": "针对提取伴奏训练的模型，出来的伴奏非常接近原版伴奏",
+        "rating": "⭐⭐⭐⭐⭐"
     },
     "melband_roformer_instvox_duality_v2.ckpt": {
         "model_class": "vocal_models",
@@ -801,7 +1277,14 @@
         "is_installed": false,
         "target_position": "./pretrain/vocal_models/melband_roformer_instvox_duality_v2.ckpt",
         "model_type": "mel_band_roformer",
-        "link": "https://huggingface.co/Sucial/MSST-WebUI/resolve/main/All_Models/vocal_models/melband_roformer_instvox_duality_v2.ckpt"
+        "link": "https://huggingface.co/Sucial/MSST-WebUI/resolve/main/All_Models/vocal_models/melband_roformer_instvox_duality_v2.ckpt",
+        "stems": [
+            "Vocals",
+            "Instrumental"
+        ],
+        "size": "1639.48 MB",
+        "note": "平衡了人声和伴奏提取质量，并且处理速度较快，虽然模型最大",
+        "rating": "⭐⭐⭐⭐⭐"
     },
     "BS-Roformer_LargeV1.ckpt": {
         "model_class": "vocal_models",
@@ -811,7 +1294,14 @@
         "is_installed": false,
         "target_position": "./pretrain/vocal_models/BS-Roformer_LargeV1.ckpt",
         "model_type": "bs_roformer",
-        "link": "https://huggingface.co/Sucial/MSST-WebUI/resolve/main/All_Models/vocal_models/BS-Roformer_LargeV1.ckpt"
+        "link": "https://huggingface.co/Sucial/MSST-WebUI/resolve/main/All_Models/vocal_models/BS-Roformer_LargeV1.ckpt",
+        "stems": [
+            "vocals",
+            "other"
+        ],
+        "size": "705.97 MB",
+        "note": "大模型，用于提取人声，处理速度和质量都不错，能比得上 bsr1296",
+        "rating": "⭐⭐⭐⭐⭐"
     },
     "big_beta5e.ckpt": {
         "model_class": "vocal_models",
@@ -821,7 +1311,14 @@
         "is_installed": false,
         "target_position": "./pretrain/vocal_models/big_beta5e.ckpt",
         "model_type": "mel_band_roformer",
-        "link": "https://huggingface.co/Sucial/MSST-WebUI/resolve/main/All_Models/vocal_models/big_beta5e.ckpt"
+        "link": "https://huggingface.co/Sucial/MSST-WebUI/resolve/main/All_Models/vocal_models/big_beta5e.ckpt",
+        "stems": [
+            "vocals",
+            "other"
+        ],
+        "size": "1411.2 MB",
+        "note": "超级大模型，用于提取人声，处理速度和质量都不错，但人声存在少量噪声",
+        "rating": "⭐⭐⭐⭐⭐"
     },
     "mel_band_roformer_instrumental_becruily.ckpt": {
         "model_class": "vocal_models",
@@ -831,7 +1328,14 @@
         "is_installed": false,
         "target_position": "./pretrain/vocal_models/mel_band_roformer_instrumental_becruily.ckpt",
         "model_type": "mel_band_roformer",
-        "link": "https://huggingface.co/Sucial/MSST-WebUI/resolve/main/All_Models/vocal_models/mel_band_roformer_instrumental_becruily.ckpt"
+        "link": "https://huggingface.co/Sucial/MSST-WebUI/resolve/main/All_Models/vocal_models/mel_band_roformer_instrumental_becruily.ckpt",
+        "stems": [
+            "other",
+            "vocals"
+        ],
+        "size": "870.81 MB",
+        "note": "针对提取伴奏训练的模型，伴奏 SDR 值和 1296 一样，但是推理速度更快",
+        "rating": "⭐⭐⭐⭐⭐"
     },
     "mel_band_roformer_vocals_becruily.ckpt": {
         "model_class": "vocal_models",
@@ -841,7 +1345,14 @@
         "is_installed": false,
         "target_position": "./pretrain/vocal_models/mel_band_roformer_vocals_becruily.ckpt",
         "model_type": "mel_band_roformer",
-        "link": "https://huggingface.co/Sucial/MSST-WebUI/resolve/main/All_Models/vocal_models/mel_band_roformer_vocals_becruily.ckpt"
+        "link": "https://huggingface.co/Sucial/MSST-WebUI/resolve/main/All_Models/vocal_models/mel_band_roformer_vocals_becruily.ckpt",
+        "stems": [
+            "other",
+            "vocals"
+        ],
+        "size": "870.81 MB",
+        "note": "针对提取人声训练的模型，速度和质量都不错，但人声存在少量噪声",
+        "rating": "⭐⭐⭐⭐⭐"
     },
     "bs_roformer_male_female_by_aufr33_sdr_7.2889.ckpt": {
         "model_class": "vocal_models",
@@ -851,6 +1362,22 @@
         "is_installed": false,
         "target_position": "./pretrain/vocal_models/bs_roformer_male_female_by_aufr33_sdr_7.2889.ckpt",
         "model_type": "bs_roformer",
-        "link": "https://huggingface.co/Sucial/MSST-WebUI/resolve/main/All_Models/vocal_models/bs_roformer_male_female_by_aufr33_sdr_7.2889.ckpt"
+        "link": "https://huggingface.co/Sucial/MSST-WebUI/resolve/main/All_Models/vocal_models/bs_roformer_male_female_by_aufr33_sdr_7.2889.ckpt",
+        "stems": [
+            "male",
+            "female"
+        ],
+        "size": "502.7 MB",
+        "note": "用于分离男女声合唱，只能分合唱，间隔唱不行，效果一般，能用"
+    },
+    "model_steps_64000_simplified.ckpt": {
+        "model_name": "model_steps_64000_simplified.ckpt",
+        "model_class": "SOME_weights",
+        "model_type": "some",
+        "stems": [],
+        "note": "SOME 人声转 MIDI 默认权重，README 要求放在 ComfyUI/models/MSST/SOME_weights。",
+        "target_position": "./model_steps_64000_simplified.ckpt",
+        "link": "https://huggingface.co/Sucial/MSST-WebUI/resolve/55155c4e2f99d0ca94d24fce88d6dc25711a9252/SOME_weights/model_steps_64000_simplified.ckpt",
+        "is_installed": false
     }
 }

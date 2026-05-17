@@ -173,9 +173,18 @@ $env:COMFY_MSST_OUTPUT_ROOT="D:\ComfyUI\output\MSST"
 
 ### 模型加载
 
+- `MSST 在线加载模型`
+  - 从本地 `msst_webui/data/models_info.json` 选择 README 推荐表中的模型。
+  - 支持 `hf-mirror.com`、`huggingface.co` 和自定义反代主机名下载。
+  - 按模型类别自动保存到 `vocal_models`、`multi_stem_models`、`single_stem_models`、`VR_Models` 或 `SOME_weights`。
+  - 已存在且大小/SHA256 匹配时直接复用缓存，避免重复下载。
+  - 选择模型后会直接在节点下方显示分类、支持音轨、体积、备注和推荐星级。
+  - 输出的 `模型信息` 与本地加载节点一致，可连接到 `MSST 获取指定音轨`。
+
 - `MSST 加载本地模型`
   - 自动扫描 `models/MSST/pretrain` 下的 MSST 模型。
   - 选择模型后自动匹配 YAML 配置。
+  - 输出统一的 `模型信息`，可连接到 `MSST 获取指定音轨`。
 
 - `MSST 手动加载模型`
   - 手动填写模型架构、模型路径和配置路径。
@@ -201,7 +210,9 @@ $env:COMFY_MSST_OUTPUT_ROOT="D:\ComfyUI\output\MSST"
 
 - `MSST 获取指定音轨`
   - 从分离结果中取出指定 stem。
-  - `stem_name` 提供中文注释的下拉候选，来源包括 MSST 配置和 VR 模型索引。
+  - `stem_name` 提供中文注释的下拉候选，来源包括 MSST 配置、VR 模型索引和在线模型清单。
+  - 可连接加载节点的 `模型信息`；连接后 `stem_name` 下拉会收窄为当前模型支持的 stems。
+  - `stem_name` 选 `auto` 时会优先按该模型的 stems 自动匹配。
   - `custom_stem_name` 可手动输入特殊音轨名。
 
 - `MSST 获取常用音轨`

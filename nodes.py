@@ -1,10 +1,13 @@
 import gc
+import hashlib
 import json
 import os
 import shutil
 import sys
 import tempfile
 import threading
+import urllib.parse
+import urllib.request
 from contextlib import contextmanager
 from dataclasses import dataclass
 from pathlib import Path
@@ -68,6 +71,7 @@ STEM_PRESETS = [
     "restored",
 ]
 STEM_CHOICE_FALLBACK = "custom"
+DOWNLOAD_HOSTS = ["hf-mirror.com", "huggingface.co", "custom"]
 
 _RUNTIME_LOCK = threading.RLock()
 _MODEL_CACHE: Dict[Tuple[Any, ...], Any] = {}
@@ -107,6 +111,33 @@ def _load_catalog() -> Dict[str, Dict[str, Any]]:
         return {}
     with path.open("r", encoding="utf-8") as file:
         return json.load(file)
+
+
+def _online_entries() -> List[Dict[str, Any]]:
+    return [dict(data, model_name=data.get("model_name") or name) for name, data in _load_catalog().items() if isinstance(data, dict) and data.get("link")]
+
+
+def _online_choice_key(entry: Dict[str, Any]) -> str:
+    return f"{entry.get('model_class', 'unknown')}/{entry.get('model_name', 'unknown')}"
+
+
+def _online_model_choices() -> List[str]:
+    choices = [_online_choice_key(entry) for entry in _online_entries()]
+    return sorted(choices, key=str.lower) or ["No online models listed"]
+
+
+def _online_entry_for_choice(choice: str) -> Dict[str, Any]:
+    wanted = choice.strip()
+    entries = _online_entries()
+    for entry in entries:
+        if _online_choice_key(entry) == wanted or entry.get("model_name") == wanted:
+            return entry
+    if "/" in wanted:
+        model_class, model_name = wanted.split("/", 1)
+        for entry in entries:
+            if entry.get("model_class") == model_class and entry.get("model_name") == model_name:
+                return entry
+    raise ValueError(f"Model is not present in {_catalog_path()}: {choice}")
 
 
 def _catalog_choices(classes: Iterable[str]) -> List[str]:
@@ -235,6 +266,12 @@ def _stem_choices() -> List[str]:
         _add_stem_choice(choices, data.get("primary_stem"))
         _add_stem_choice(choices, data.get("secondary_stem"))
 
+    for data in _online_entries():
+        for stem in data.get("stems") or []:
+            _add_stem_choice(choices, stem)
+        _add_stem_choice(choices, data.get("primary_stem"))
+        _add_stem_choice(choices, data.get("secondary_stem"))
+
     for root_name in ("configs", "configs_backup"):
         root = MSST_ROOT / root_name
         if not root.is_dir():
@@ -243,7 +280,7 @@ def _stem_choices() -> List[str]:
             for stem in _read_config_stems(path):
                 _add_stem_choice(choices, stem)
 
-    return list(choices.values()) + [STEM_CHOICE_FALLBACK]
+    return ["auto"] + list(choices.values()) + [STEM_CHOICE_FALLBACK]
 
 
 def _local_msst_spec(model_rel: str) -> MSSTModelSpec:
@@ -304,6 +341,187 @@ def _resolve_model_path(path: str) -> Path:
     if parts and parts[0] == "pretrain":
         return (MODEL_ROOT / Path(*parts[1:])).resolve()
     return (MODEL_ROOT / raw).resolve()
+
+
+def _destination_for_online_entry(entry: Dict[str, Any]) -> Path:
+    model_class = str(entry.get("model_class") or "")
+    target = str(entry.get("target_position") or "").strip()
+    if model_class == "SOME_weights":
+        raw_text = target.strip('"').replace("\\", "/").lstrip("./")
+        if raw_text.startswith("SOME_weights/"):
+            raw_text = raw_text[len("SOME_weights/") :]
+        return (SOME_WEIGHT_ROOT / (raw_text or str(entry["model_name"]))).resolve()
+    if target:
+        return _resolve_model_path(target)
+    return (MODEL_ROOT / model_class / str(entry["model_name"])).resolve()
+
+
+def _format_size(size_bytes: Any) -> str:
+    try:
+        value = float(size_bytes)
+    except (TypeError, ValueError):
+        return ""
+    units = ["B", "KB", "MB", "GB", "TB"]
+    index = 0
+    while value >= 1024 and index < len(units) - 1:
+        value /= 1024
+        index += 1
+    return f"{value:.2f} {units[index]}"
+
+
+def _online_entry_stems(entry: Optional[Dict[str, Any]]) -> List[str]:
+    if isinstance(entry, str):
+        text = entry.strip()
+        if text.startswith("名称:"):
+            text = text.splitlines()[0].split(":", 1)[1].strip()
+        else:
+            text = text.split("|", 1)[0].strip()
+        if text:
+            entry = _load_catalog().get(Path(text).name) or _load_catalog().get(text)
+    if not isinstance(entry, dict):
+        return []
+    stems: List[str] = []
+    for key in ("stems",):
+        value = entry.get(key)
+        if isinstance(value, list):
+            stems.extend(str(item) for item in value)
+        elif isinstance(value, str):
+            stems.extend(part.strip() for part in value.split(","))
+    for key in ("primary_stem", "secondary_stem"):
+        value = entry.get(key)
+        if value:
+            stems.append(str(value))
+    unique: Dict[str, str] = {}
+    for stem in stems:
+        _add_stem_choice(unique, stem)
+    return list(unique.values())
+
+
+def _online_entry_info(entry: Dict[str, Any], destination: Optional[Path] = None, status: str = "") -> str:
+    size = str(entry.get("size") or "").strip() or _format_size(entry.get("model_size"))
+    stems = ", ".join(_online_entry_stems(entry)) or "-"
+    lines = [
+        f"名称: {entry.get('model_name', '-')}",
+        f"类型: {entry.get('model_class', '-')}"
+        + (f" / {entry.get('model_type')}" if entry.get("model_type") and entry.get("model_type") != "vr" else ""),
+        f"Stems: {stems}",
+        f"体积: {size or '-'}",
+        f"备注: {entry.get('note') or '-'}",
+        f"推荐星级: {entry.get('rating') or '-'}",
+    ]
+    if destination is not None:
+        lines.append(f"本地路径: {destination}")
+    if status:
+        lines.append(f"状态: {status}")
+    return "\n".join(lines)
+
+
+def _model_info_payload(entry: Dict[str, Any], local_path: Optional[Path] = None, status: str = "") -> Dict[str, Any]:
+    payload = dict(entry)
+    payload["model_name"] = str(payload.get("model_name") or "")
+    payload["model_class"] = str(payload.get("model_class") or "")
+    payload["stems"] = _online_entry_stems(payload)
+    payload["size"] = str(payload.get("size") or "").strip() or _format_size(payload.get("model_size"))
+    payload["note"] = str(payload.get("note") or "")
+    payload["rating"] = str(payload.get("rating") or "")
+    if local_path is not None:
+        payload["local_path"] = str(local_path)
+    if status:
+        payload["status"] = status
+    return payload
+
+
+def _model_info_for_model_name(model_name: str, local_path: Optional[Path] = None, status: str = "") -> Dict[str, Any]:
+    catalog = _load_catalog()
+    data = dict(catalog.get(model_name, {}))
+    data["model_name"] = data.get("model_name") or model_name
+    if local_path is None and data.get("target_position"):
+        try:
+            local_path = _destination_for_online_entry(data)
+        except Exception:
+            local_path = None
+    return _model_info_payload(data, local_path, status)
+
+
+def _rewrite_download_url(url: str, host_choice: str, custom_host: str) -> str:
+    if not url:
+        raise ValueError("Selected model does not have a download URL in models_info.json.")
+    parsed = urllib.parse.urlsplit(url.strip())
+    if not parsed.scheme:
+        parsed = urllib.parse.urlsplit("https://" + url.strip())
+    host = parsed.netloc
+    if host_choice == "custom":
+        custom = custom_host.strip().strip("/")
+        if not custom:
+            raise ValueError("custom_host must be set when download_host is custom.")
+        custom_parsed = urllib.parse.urlsplit(custom if "://" in custom else f"https://{custom}")
+        host = custom_parsed.netloc or custom_parsed.path
+    elif host_choice in {"hf-mirror.com", "huggingface.co"}:
+        host = host_choice
+    query = urllib.parse.parse_qsl(parsed.query, keep_blank_values=True)
+    if not any(key == "download" for key, _ in query):
+        query.append(("download", "true"))
+    return urllib.parse.urlunsplit((parsed.scheme or "https", host, parsed.path, urllib.parse.urlencode(query), parsed.fragment))
+
+
+def _sha256_file(path: Path) -> str:
+    digest = hashlib.sha256()
+    with path.open("rb") as file:
+        for chunk in iter(lambda: file.read(1024 * 1024), b""):
+            digest.update(chunk)
+    return digest.hexdigest()
+
+
+def _is_cached_file(path: Path, entry: Dict[str, Any], verify_sha256: bool) -> bool:
+    if not path.is_file():
+        return False
+    expected_size = entry.get("model_size")
+    if expected_size:
+        try:
+            if path.stat().st_size != int(expected_size):
+                return False
+        except (OSError, ValueError):
+            return False
+    expected_sha = str(entry.get("sha256") or "").strip().lower()
+    if verify_sha256 and expected_sha and _sha256_file(path).lower() != expected_sha:
+        return False
+    return True
+
+
+def _download_to_path(url: str, destination: Path, timeout_sec: int) -> None:
+    destination.parent.mkdir(parents=True, exist_ok=True)
+    request = urllib.request.Request(url, headers={"User-Agent": "ComfyUI-MSST/online-loader"})
+    part_path = destination.with_name(destination.name + ".part")
+    try:
+        with urllib.request.urlopen(request, timeout=max(1, int(timeout_sec))) as response, part_path.open("wb") as output:
+            shutil.copyfileobj(response, output, length=1024 * 1024)
+        os.replace(part_path, destination)
+    finally:
+        if part_path.exists():
+            try:
+                part_path.unlink()
+            except OSError:
+                pass
+
+
+def _public_model_info_catalog() -> Dict[str, Dict[str, Any]]:
+    models: Dict[str, Dict[str, Any]] = {}
+    for entry in _online_entries():
+        payload = _model_info_payload(entry, _destination_for_online_entry(entry))
+        models[_online_choice_key(payload)] = payload
+    return models
+
+
+try:
+    from aiohttp import web
+    from server import PromptServer
+
+    @PromptServer.instance.routes.get("/comfy-msst/models-info")
+    async def _comfy_msst_models_info(_request):
+        return web.json_response({"models": _public_model_info_catalog()})
+
+except Exception:
+    pass
 
 
 def _config_from_catalog_target(target_position: str) -> Path:
@@ -666,6 +884,73 @@ def _catalog_vr_spec(model_name: str) -> VRModelSpec:
     return VRModelSpec(model_path=str(_resolve_model_path(data["target_position"])), model_name=model_name)
 
 
+class ComfyMSSTOnlineModelLoader:
+    @classmethod
+    def INPUT_TYPES(cls):
+        return {
+            "required": {
+                "model": (_online_model_choices(), _ui("在线模型", "来自本地 models_info.json；内容包含 README 推荐表信息和下载链接。")),
+                "download_host": (DOWNLOAD_HOSTS, _ui("下载源", "选择 huggingface.co、国内 hf-mirror.com，或 custom 使用自定义反代主机名。", default="hf-mirror.com")),
+                "custom_host": ("STRING", _ui("自定义反代", "download_host 为 custom 时使用，例如 hf-mirror.com 或 https://your.domain。", default="")),
+                "force_download": ("BOOLEAN", _ui("强制重下", "忽略本地缓存并重新下载模型文件。", default=False)),
+                "verify_sha256": ("BOOLEAN", _ui("校验SHA256", "清单中有 sha256 时校验文件完整性；大模型会多花一点时间。", default=True)),
+            },
+            "optional": {
+                "timeout_sec": ("INT", _ui("超时秒数", "单次网络请求超时时间。大模型下载慢时可适当调大。", default=60, min=5, max=3600, step=5)),
+            },
+        }
+
+    RETURN_TYPES = ("MSST_MODEL", "MSST_VR_MODEL", "MSST_MODEL_INFO", "STRING", "STRING")
+    RETURN_NAMES = ("MSST模型", "VR模型", "模型信息", "模型信息文本", "本地路径")
+    OUTPUT_TOOLTIPS = (
+        "MSST 模型对象，连接到 MSST 分离音频；VR/SOME 模型时为空。",
+        "VR 模型对象，连接到 MSST VR 分离音频；MSST/SOME 模型时为空。",
+        "包含名称、类别、stems、备注、星级和路径的模型信息对象，可连接到获取音轨节点。",
+        "模型名称、类型、stems、体积、备注、推荐星级和下载状态文本。",
+        "下载或命中的本地模型路径。",
+    )
+    DESCRIPTION = "从本地 README 推荐模型清单选择模型，支持 huggingface.co、hf-mirror.com 和自定义反代下载；已存在且大小/sha 匹配时直接复用缓存。"
+    FUNCTION = "load"
+    CATEGORY = CATEGORY
+
+    def load(self, model: str, download_host: str, custom_host: str, force_download: bool, verify_sha256: bool, timeout_sec=60):
+        if model == "No online models listed":
+            raise FileNotFoundError(f"No downloadable models were found in: {_catalog_path()}")
+
+        _ensure_runtime_layout()
+        entry = dict(_online_entry_for_choice(model))
+        destination = _destination_for_online_entry(entry)
+        cached = _is_cached_file(destination, entry, bool(verify_sha256))
+        status = "使用本地缓存"
+        if force_download or not cached:
+            url = _rewrite_download_url(str(entry.get("link") or ""), download_host, custom_host)
+            _download_to_path(url, destination, int(timeout_sec))
+            if not _is_cached_file(destination, entry, bool(verify_sha256)):
+                raise ValueError(f"Downloaded file failed cache validation: {destination}")
+            status = f"已下载: {url}"
+
+        entry = _model_info_payload(entry, destination, status)
+        info = _online_entry_info(entry, destination, status)
+        model_class = str(entry.get("model_class") or "")
+        model_name = str(entry.get("model_name") or destination.name)
+
+        msst_spec = None
+        vr_spec = None
+        if model_class == "VR_Models":
+            vr_spec = VRModelSpec(model_path=str(destination), model_name=model_name)
+        elif model_class == "SOME_weights":
+            pass
+        else:
+            model_type = str(entry.get("model_type") or _infer_model_type_from_name(model_name) or "")
+            if not model_type:
+                raise ValueError(f"Could not infer model type for {model_name}. Update models_info.json or use the manual loader.")
+            config_path = _config_from_catalog_target(str(entry.get("target_position") or f"./pretrain/{model_class}/{model_name}"))
+            _check_file(str(config_path), "MSST config")
+            msst_spec = MSSTModelSpec(model_type=model_type, model_path=str(destination), config_path=str(config_path), model_name=model_name)
+
+        return (msst_spec, vr_spec, entry, info, str(destination))
+
+
 class ComfyMSSTModelFromCatalog:
     @classmethod
     def INPUT_TYPES(cls):
@@ -676,9 +961,9 @@ class ComfyMSSTModelFromCatalog:
             }
         }
 
-    RETURN_TYPES = ("MSST_MODEL", "STRING")
-    RETURN_NAMES = ("MSST模型", "模型信息")
-    OUTPUT_TOOLTIPS = ("已解析好的 MSST 模型对象，连接到 MSST 分离节点。", "模型名称、架构类型和配置文件路径。")
+    RETURN_TYPES = ("MSST_MODEL", "MSST_MODEL_INFO", "STRING")
+    RETURN_NAMES = ("MSST模型", "模型信息", "模型信息文本")
+    OUTPUT_TOOLTIPS = ("已解析好的 MSST 模型对象，连接到 MSST 分离节点。", "可连接到 MSST 获取指定音轨的模型信息对象。", "模型名称、架构类型和配置文件路径文本。")
     DESCRIPTION = "从本地 models/MSST/pretrain 自动列出 MSST 模型，并按模型名自动匹配 configs/configs_backup 中的配置文件。"
     FUNCTION = "load"
     CATEGORY = CATEGORY
@@ -694,8 +979,9 @@ class ComfyMSSTModelFromCatalog:
             spec = _local_msst_spec(model_name)
         else:
             spec = _catalog_msst_spec(model_name, model_class)
-        info = f"{spec.model_name} | type={spec.model_type} | config={spec.config_path}"
-        return (spec, info)
+        info = _model_info_for_model_name(spec.model_name, Path(spec.model_path))
+        text = f"{spec.model_name} | type={spec.model_type} | config={spec.config_path}"
+        return (spec, info, text)
 
 
 class ComfyMSSTModelFromPaths:
@@ -709,9 +995,9 @@ class ComfyMSSTModelFromPaths:
             }
         }
 
-    RETURN_TYPES = ("MSST_MODEL", "STRING")
-    RETURN_NAMES = ("MSST模型", "模型信息")
-    OUTPUT_TOOLTIPS = ("手动路径构造的 MSST 模型对象。", "模型名称、架构类型和配置文件路径。")
+    RETURN_TYPES = ("MSST_MODEL", "MSST_MODEL_INFO", "STRING")
+    RETURN_NAMES = ("MSST模型", "模型信息", "模型信息文本")
+    OUTPUT_TOOLTIPS = ("手动路径构造的 MSST 模型对象。", "可连接到 MSST 获取指定音轨的模型信息对象。", "模型名称、架构类型和配置文件路径文本。")
     DESCRIPTION = "手动指定 MSST 模型文件、模型架构和 YAML 配置文件；适合第三方或自训练模型。"
     FUNCTION = "load"
     CATEGORY = CATEGORY
@@ -720,7 +1006,8 @@ class ComfyMSSTModelFromPaths:
         model = _resolve_model_path(model_path)
         config = _resolve_runtime_path(config_path)
         spec = MSSTModelSpec(model_type=model_type, model_path=str(model), config_path=str(config), model_name=model.name)
-        return (spec, f"{spec.model_name} | type={spec.model_type} | config={spec.config_path}")
+        info = _model_info_payload({"model_name": spec.model_name, "model_class": model.parent.name, "model_type": spec.model_type}, model)
+        return (spec, info, f"{spec.model_name} | type={spec.model_type} | config={spec.config_path}")
 
 
 class ComfyMSSTVRModelFromCatalog:
@@ -728,9 +1015,9 @@ class ComfyMSSTVRModelFromCatalog:
     def INPUT_TYPES(cls):
         return {"required": {"model_name": (_local_vr_choices(), _ui("VR模型名称", "扫描 models/MSST/pretrain/VR_Models 下已存在的 UVR/VR 模型。"))}}
 
-    RETURN_TYPES = ("MSST_VR_MODEL", "STRING")
-    RETURN_NAMES = ("VR模型", "模型信息")
-    OUTPUT_TOOLTIPS = ("已解析好的 VR 模型对象，连接到 MSST VR 分离节点。", "VR 模型名称和路径。")
+    RETURN_TYPES = ("MSST_VR_MODEL", "MSST_MODEL_INFO", "STRING")
+    RETURN_NAMES = ("VR模型", "模型信息", "模型信息文本")
+    OUTPUT_TOOLTIPS = ("已解析好的 VR 模型对象，连接到 MSST VR 分离节点。", "可连接到 MSST 获取指定音轨的模型信息对象。", "VR 模型名称和路径文本。")
     DESCRIPTION = "从本地 models/MSST/pretrain/VR_Models 自动列出 UVR/VR 模型。"
     FUNCTION = "load"
     CATEGORY = CATEGORY
@@ -745,7 +1032,8 @@ class ComfyMSSTVRModelFromCatalog:
             spec = VRModelSpec(model_path=str(model), model_name=resolved_name)
         else:
             spec = _catalog_vr_spec(model_name)
-        return (spec, f"{spec.model_name} | path={spec.model_path}")
+        info = _model_info_for_model_name(spec.model_name, Path(spec.model_path))
+        return (spec, info, f"{spec.model_name} | path={spec.model_path}")
 
 
 class ComfyMSSTVRModelFromPath:
@@ -753,9 +1041,9 @@ class ComfyMSSTVRModelFromPath:
     def INPUT_TYPES(cls):
         return {"required": {"model_path": ("STRING", _ui("VR模型路径", "VR/UVR 模型文件路径。相对路径会从 models/MSST/pretrain 解析。", default="pretrain/VR_Models/1_HP-UVR.pth"))}}
 
-    RETURN_TYPES = ("MSST_VR_MODEL", "STRING")
-    RETURN_NAMES = ("VR模型", "模型信息")
-    OUTPUT_TOOLTIPS = ("手动路径构造的 VR 模型对象。", "VR 模型名称和路径。")
+    RETURN_TYPES = ("MSST_VR_MODEL", "MSST_MODEL_INFO", "STRING")
+    RETURN_NAMES = ("VR模型", "模型信息", "模型信息文本")
+    OUTPUT_TOOLTIPS = ("手动路径构造的 VR 模型对象。", "可连接到 MSST 获取指定音轨的模型信息对象。", "VR 模型名称和路径文本。")
     DESCRIPTION = "手动指定 VR/UVR 模型路径，适合第三方模型。"
     FUNCTION = "load"
     CATEGORY = CATEGORY
@@ -763,7 +1051,8 @@ class ComfyMSSTVRModelFromPath:
     def load(self, model_path: str):
         model = _resolve_model_path(model_path)
         spec = VRModelSpec(model_path=str(model), model_name=model.name)
-        return (spec, f"{spec.model_name} | path={spec.model_path}")
+        info = _model_info_payload({"model_name": spec.model_name, "model_class": "VR_Models", "model_type": "vr"}, model)
+        return (spec, info, f"{spec.model_name} | path={spec.model_path}")
 
 
 class ComfyMSSTSeparate:
@@ -882,6 +1171,7 @@ class ComfyMSSTGetStem:
                 "stem_name": (_stem_choices(), _ui("音轨名称", "从下拉列表选择需要取出的音轨；候选来自原 MSST WebUI 配置和 VR 模型索引。", default="vocals")),
             },
             "optional": {
+                "model_info": ("MSST_MODEL_INFO,STRING", _ui("模型信息", "可连接加载节点的模型信息输出；stem_name 为 auto 时会优先按该模型的 stems 匹配。", forceInput=True)),
                 "custom_stem_name": ("STRING", _ui("自定义音轨名", "填写后优先使用这里的名称，适合第三方模型输出的特殊音轨。", default="")),
                 "fallback": (["error", "first"], _ui("找不到时", "error 报错；first 返回第一个可用音轨。", default="error")),
             },
@@ -895,18 +1185,36 @@ class ComfyMSSTGetStem:
     CATEGORY = CATEGORY
 
     @classmethod
-    def VALIDATE_INPUTS(cls, stem_name, custom_stem_name=""):
+    def VALIDATE_INPUTS(cls, stem_name, custom_stem_name="", **kwargs):
         return True
 
-    def get(self, stems, stem_name, custom_stem_name="", fallback="error"):
+    def get(self, stems, stem_name, model_info=None, custom_stem_name="", fallback="error"):
         if custom_stem_name:
             stem_name = custom_stem_name
         available = stems.get("stems", {})
         normalized = {_normalize_key(name): name for name in available.keys()}
+
+        if _normalize_key(stem_name) == "auto":
+            for preferred in _online_entry_stems(model_info):
+                key = normalized.get(_normalize_key(preferred))
+                if key is not None:
+                    return (available[key], key)
+                contains = [name for norm, name in normalized.items() if _normalize_key(preferred) in norm]
+                if contains:
+                    return (available[contains[0]], contains[0])
+            if available:
+                key = next(iter(available.keys()))
+                return (available[key], key)
+
         key = normalized.get(_normalize_key(stem_name))
         if key is None:
             contains = [name for norm, name in normalized.items() if _normalize_key(stem_name) in norm]
             key = contains[0] if contains else None
+        if key is None:
+            for preferred in _online_entry_stems(model_info):
+                key = normalized.get(_normalize_key(preferred))
+                if key is not None:
+                    break
         if key is None and fallback == "first" and available:
             key = next(iter(available.keys()))
         if key is None:
@@ -1207,6 +1515,7 @@ class ComfyMSSTClearCache:
 
 
 NODE_CLASS_MAPPINGS = {
+    "ComfyMSSTOnlineModelLoader": ComfyMSSTOnlineModelLoader,
     "ComfyMSSTModelFromCatalog": ComfyMSSTModelFromCatalog,
     "ComfyMSSTModelFromPaths": ComfyMSSTModelFromPaths,
     "ComfyMSSTVRModelFromCatalog": ComfyMSSTVRModelFromCatalog,
@@ -1224,6 +1533,7 @@ NODE_CLASS_MAPPINGS = {
 }
 
 NODE_DISPLAY_NAME_MAPPINGS = {
+    "ComfyMSSTOnlineModelLoader": "MSST 在线加载模型",
     "ComfyMSSTModelFromCatalog": "MSST 加载本地模型",
     "ComfyMSSTModelFromPaths": "MSST 手动加载模型",
     "ComfyMSSTVRModelFromCatalog": "MSST 加载本地 VR 模型",

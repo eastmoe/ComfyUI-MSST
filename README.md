@@ -44,7 +44,7 @@ ComfyUI/models/MSST/pretrain/VR_Models
 ComfyUI/models/MSST/SOME_weights
 ```
 
-Catalog nodes read model metadata from `msst_webui/data_backup/models_info.json`
+Catalog nodes read model metadata from `msst_webui/data/models_info.json`
 and resolve checkpoint paths into `ComfyUI/models/MSST/pretrain`. YAML configs
 remain inside `msst_webui/configs_backup` and are copied to `msst_webui/configs`
 at runtime if MSST needs the original layout.
@@ -163,6 +163,11 @@ wiki: `https://my.feishu.cn/wiki/Dy0bwG4XIizBgJkePDucILaMnlf`. These model weigh
 
 ## Nodes
 
+- `MSST Online Model Loader`: select a model from
+  `msst_webui/data/models_info.json`, download from `hf-mirror.com`,
+  `huggingface.co`, or a custom reverse-proxy host, and reuse existing files
+  when size/SHA256 validation passes. The selected model's category, stems,
+  notes, and rating are shown directly inside the node.
 - `MSST Model From Catalog`: select a known MSST checkpoint from the model index.
 - `MSST Model From Paths`: use a custom MSST checkpoint and YAML config.
 - `MSST Separate Audio`: run MSST models for vocals, multi-stem separation,
@@ -172,7 +177,8 @@ wiki: `https://my.feishu.cn/wiki/Dy0bwG4XIizBgJkePDucILaMnlf`. These model weigh
 - `MSST VR Separate Audio`: run VR models for vocals, denoise, dereverb,
   de-echo, and related two-stem tasks.
 - `MSST Get Stem` / `MSST Get Common Stem`: extract one returned stem as native
-  ComfyUI `AUDIO`.
+  ComfyUI `AUDIO`; `MSST Get Stem` can use online model info with `auto` stem
+  selection.
 - `MSST List Stems`: inspect available stem names.
 - `MSST Ensemble Audio`: combine two to eight audio inputs with MSST ensemble
   algorithms.
