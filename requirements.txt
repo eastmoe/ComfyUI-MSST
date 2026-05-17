@@ -4,6 +4,7 @@
 # transformers, safetensors, pyyaml, scipy, tqdm, psutil, and pydantic.
 # The bounds below are chosen to avoid downgrading the ComfyUI core stack.
 
+# The following packages has been removed.
 # accelerate
 # auraloss
 # bitsandbytes; platform_system != "Windows"
@@ -33,7 +34,6 @@
 audioread
 demucs==4.0.0
 librosa>=0.10.2
-pytorch-lightning>=2.0.0
 mido
 samplerate
 segmentation_models_pytorch==0.3.3

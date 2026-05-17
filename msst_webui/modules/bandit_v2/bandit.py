@@ -3,7 +3,6 @@ from typing import Dict, List, Optional
 import torch
 import torchaudio as ta
 from torch import nn
-import pytorch_lightning as pl
 
 from .bandsplit import BandSplitModule
 from .maskestim import OverlappingMaskEstimationModule
@@ -11,7 +10,7 @@ from .tfmodel import SeqBandModellingModule
 from .utils import MusicalBandsplitSpecification
 
 
-class BaseEndToEndModule(pl.LightningModule):
+class BaseEndToEndModule(nn.Module):
 	def __init__(self) -> None:
 		super().__init__()
 

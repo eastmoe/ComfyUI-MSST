@@ -1,8 +1,7 @@
 import os
 from typing import Mapping, Optional
 
-import pytorch_lightning as pl
-
+from modules.bandit.core.data.datamodule import SimpleDataModule
 from .dataset import DivideAndRemasterDataset, DivideAndRemasterDeterministicChunkDataset, DivideAndRemasterRandomChunkDataset, DivideAndRemasterRandomChunkDatasetWithSpeechReverb
 
 
@@ -16,7 +15,7 @@ def DivideAndRemasterDataModule(
 	datamodule_kwargs: Optional[Mapping] = None,
 	use_speech_reverb: bool = False,
 	# augmentor=None
-) -> pl.LightningDataModule:
+) -> SimpleDataModule:
 	if train_kwargs is None:
 		train_kwargs = {}
 
@@ -47,7 +46,7 @@ def DivideAndRemasterDataModule(
 	# if augmentor is not None:
 	#     train_dataset = AugmentedDataset(train_dataset, augmentor)
 
-	datamodule = pl.LightningDataModule.from_datasets(
+	datamodule = SimpleDataModule(
 		train_dataset=train_dataset,
 		val_dataset=DivideAndRemasterDeterministicChunkDataset(data_root, "val", **val_kwargs),
 		test_dataset=DivideAndRemasterDataset(data_root, "test", **test_kwargs),
@@ -55,7 +54,5 @@ def DivideAndRemasterDataModule(
 		num_workers=num_workers,
 		**datamodule_kwargs,
 	)
-
-	datamodule.predict_dataloader = datamodule.test_dataloader  # type: ignore[method-assign]
 
 	return datamodule

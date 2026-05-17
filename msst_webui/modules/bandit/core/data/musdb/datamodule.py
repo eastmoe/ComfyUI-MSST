@@ -1,8 +1,7 @@
 import os.path
 from typing import Mapping, Optional
 
-import pytorch_lightning as pl
-
+from modules.bandit.core.data.datamodule import SimpleDataModule
 from modules.bandit.core.data.musdb.dataset import MUSDB18BaseDataset, MUSDB18FullTrackDataset, MUSDB18SadDataset, MUSDB18SadOnTheFlyAugmentedDataset
 
 
@@ -17,7 +16,7 @@ def MUSDB18DataModule(
 	datamodule_kwargs: Optional[Mapping] = None,
 	use_on_the_fly: bool = True,
 	npy_memmap: bool = True,
-) -> pl.LightningDataModule:
+) -> SimpleDataModule:
 	if train_kwargs is None:
 		train_kwargs = {}
 
@@ -37,17 +36,13 @@ def MUSDB18DataModule(
 	else:
 		train_dataset = MUSDB18SadDataset(data_root=os.path.join(data_root, "saded-np"), split="train", target_stem=target_stem, **train_kwargs)
 
-	datamodule = pl.LightningDataModule.from_datasets(
+	datamodule = SimpleDataModule(
 		train_dataset=train_dataset,
 		val_dataset=MUSDB18SadDataset(data_root=os.path.join(data_root, "saded-np"), split="val", target_stem=target_stem, **val_kwargs),
 		test_dataset=MUSDB18FullTrackDataset(data_root=os.path.join(data_root, "canonical"), split="test", **test_kwargs),
 		batch_size=batch_size,
 		num_workers=num_workers,
 		**datamodule_kwargs,
-	)
-
-	datamodule.predict_dataloader = (  # type: ignore[method-assign]
-		datamodule.test_dataloader
 	)
 
 	return datamodule
