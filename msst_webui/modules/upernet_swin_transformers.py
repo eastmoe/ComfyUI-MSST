@@ -1,7 +1,8 @@
 from functools import partial
 import torch
 import torch.nn as nn
-from transformers import UperNetForSemanticSegmentation
+
+from modules.transformers_compat import get_upernet_for_semantic_segmentation
 
 
 class STFT:
@@ -124,7 +125,8 @@ class Swin_UperNet_Model(nn.Module):
 
 		self.first_conv = nn.Conv2d(dim_c, c, 1, 1, 0, bias=False)
 
-		self.swin_upernet_model = UperNetForSemanticSegmentation.from_pretrained("openmmlab/upernet-swin-large")
+		upernet_model_cls = get_upernet_for_semantic_segmentation()
+		self.swin_upernet_model = upernet_model_cls.from_pretrained("openmmlab/upernet-swin-large")
 
 		self.swin_upernet_model.auxiliary_head.classifier = nn.Conv2d(256, c, kernel_size=(1, 1), stride=(1, 1))
 		self.swin_upernet_model.decode_head.classifier = nn.Conv2d(512, c, kernel_size=(1, 1), stride=(1, 1))
@@ -176,6 +178,7 @@ class Swin_UperNet_Model(nn.Module):
 
 
 if __name__ == "__main__":
+	UperNetForSemanticSegmentation = get_upernet_for_semantic_segmentation()
 	model = UperNetForSemanticSegmentation.from_pretrained("./results/", ignore_mismatched_sizes=True)
 	print(model)
 	print(model.auxiliary_head.classifier)

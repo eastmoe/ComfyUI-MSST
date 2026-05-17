@@ -32,6 +32,6 @@ spafe==0.3.2
 # torch_log_wmse
 # torchmetrics>=0.11.4
 torchseg
-transformers>=4.50.3
+transformers>=4.35.0,<6.0.0
 safetensors>=0.4.2
 neuraloperator>=2.0.0
