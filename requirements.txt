@@ -20,6 +20,7 @@
 # torch
 # torchvision
 # torchaudio
+# torchseg
 # torchmetrics>=0.11.4
 
 
@@ -37,7 +38,6 @@ samplerate
 segmentation_models_pytorch==0.3.3
 six
 soundfile
-torchseg
 transformers>=4.35.0,<6.0.0
 safetensors>=0.4.2
 neuraloperator>=2.0.0

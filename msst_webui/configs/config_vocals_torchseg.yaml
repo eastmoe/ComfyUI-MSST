@@ -9,7 +9,7 @@ audio:
   min_mean_abs: 0.000
 
 model:
-  encoder_name: maxvit_tiny_tf_512 # look with torchseg.list_encoders(). Currently 858 available
+  encoder_name: maxvit_tiny_tf_512 # segmentation_models_pytorch/timm encoder
   decoder_type: unet # unet, fpn
   act: gelu
   num_channels: 128
