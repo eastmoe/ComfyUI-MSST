@@ -5,8 +5,7 @@ from torch import nn
 
 import torch.nn.functional as F
 
-from beartype.typing import Tuple, Optional, List, Callable
-from beartype import beartype
+from typing import Tuple, Optional, List, Callable
 
 # code from pcunwa/BS-Roformer-HyperACE
 class Conv(nn.Module):

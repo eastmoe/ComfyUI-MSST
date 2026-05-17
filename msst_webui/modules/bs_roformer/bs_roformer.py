@@ -15,8 +15,7 @@ from modules.bs_roformer.hyperace_v2 import SegmModelHyperACE2
 
 from torch.utils.checkpoint import checkpoint
 
-from beartype.typing import Tuple, Optional, List, Callable
-from beartype import beartype
+from typing import Tuple, Optional, List, Callable
 
 from rotary_embedding_torch import RotaryEmbedding
 
@@ -154,7 +153,6 @@ class LinearAttention(Module):
 	this flavor of linear attention proposed in https://arxiv.org/abs/2106.09681 by El-Nouby et al.
 	"""
 
-	@beartype
 	def __init__(
 			self,
 			*,
@@ -277,7 +275,6 @@ class Transformer(Module):
 
 
 class BandSplit(Module):
-	@beartype
 	def __init__(
 			self,
 			dim,
@@ -332,7 +329,6 @@ def MLP(
 
 
 class MaskEstimator(Module):
-	@beartype
 	def __init__(
 			self,
 			dim,
@@ -367,7 +363,6 @@ class MaskEstimator(Module):
 		return torch.cat(outs, dim=-1)
 
 class MaskEstimatorHyperACE(Module):
-	@beartype
 	def __init__(
 			self,
 			dim,
@@ -413,7 +408,6 @@ class MaskEstimatorHyperACE(Module):
 		return torch.cat(outs, dim=-1) + y
 
 class MaskEstimatorFNO(Module):
-	@beartype
 	def __init__(
 			self,
 			dim,
@@ -462,7 +456,6 @@ DEFAULT_FREQS_PER_BANDS = (
 
 
 class BSRoformer(Module):
-	@beartype
 	def __init__(
 			self,
 			dim,

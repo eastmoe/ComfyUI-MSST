@@ -8,8 +8,7 @@ import torch.nn.functional as F
 from modules.bs_roformer.attend import Attend
 from torch.utils.checkpoint import checkpoint
 
-from beartype.typing import Tuple, Optional, List, Callable
-from beartype import beartype
+from typing import Tuple, Optional, List, Callable
 
 from rotary_embedding_torch import RotaryEmbedding
 
@@ -115,7 +114,6 @@ class LinearAttention(Module):
 	this flavor of linear attention proposed in https://arxiv.org/abs/2106.09681 by El-Nouby et al.
 	"""
 
-	@beartype
 	def __init__(self, *, dim, dim_head=32, heads=8, scale=8, flash=False, dropout=0.0):
 		super().__init__()
 		dim_inner = dim_head * heads
@@ -169,7 +167,6 @@ class Transformer(Module):
 
 
 class BandSplit(Module):
-	@beartype
 	def __init__(self, dim, dim_inputs: Tuple[int, ...]):
 		super().__init__()
 		self.dim_inputs = dim_inputs
@@ -211,7 +208,6 @@ def MLP(dim_in, dim_out, dim_hidden=None, depth=1, activation=nn.Tanh):
 
 
 class MaskEstimator(Module):
-	@beartype
 	def __init__(self, dim, dim_inputs: Tuple[int, ...], depth, mlp_expansion_factor=4):
 		super().__init__()
 		self.dim_inputs = dim_inputs
@@ -241,7 +237,6 @@ class MaskEstimator(Module):
 
 
 class MelBandRoformer(Module):
-	@beartype
 	def __init__(
 		self,
 		dim,

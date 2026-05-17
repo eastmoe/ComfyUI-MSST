@@ -17,8 +17,7 @@ from modules.scnet_unofficial.utils import compute_sd_layer_shapes, compute_gcr
 from einops import rearrange, pack, unpack
 from functools import partial
 
-from beartype.typing import Tuple, Optional, List, Callable
-from beartype import beartype
+from typing import Tuple, Optional, Callable
 
 
 def exists(val):
@@ -48,7 +47,6 @@ class RMSNorm(nn.Module):
 
 
 class BandSplit(nn.Module):
-	@beartype
 	def __init__(self, dim, dim_inputs: Tuple[int, ...]):
 		super().__init__()
 		self.dim_inputs = dim_inputs
@@ -102,7 +100,6 @@ class SCNet(nn.Module):
 	    T is sequence length,
 	"""
 
-	@beartype
 	def __init__(
 		self,
 		n_fft: int,
