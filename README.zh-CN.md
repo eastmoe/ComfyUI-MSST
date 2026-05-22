@@ -168,7 +168,7 @@ $env:COMFY_MSST_OUTPUT_ROOT="D:\ComfyUI\output\MSST"
 节点位于 ComfyUI 右键菜单：
 
 ```text
-音频/Comfy-MSST
+eastmoe/Comfy-MSST
 ```
 
 ### 模型加载

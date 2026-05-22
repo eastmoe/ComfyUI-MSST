@@ -32,7 +32,7 @@ DEFAULT_MODEL_ROOT = DEFAULT_MSST_MODEL_BASE / "pretrain"
 MODEL_ROOT = Path(os.environ.get("COMFY_MSST_MODEL_ROOT", DEFAULT_MODEL_ROOT)).resolve()
 SOME_WEIGHT_ROOT = Path(os.environ.get("COMFY_MSST_SOME_WEIGHT_ROOT", DEFAULT_MSST_MODEL_BASE / "SOME_weights")).resolve()
 OUTPUT_ROOT = Path(os.environ.get("COMFY_MSST_OUTPUT_ROOT", DEFAULT_OUTPUT_ROOT)).resolve()
-CATEGORY = "音频/Comfy-MSST"
+CATEGORY = "eastmoe/Comfy-MSST"
 
 MODEL_TYPES = [
     "bs_roformer",
