@@ -66,6 +66,7 @@ STEM_PRESETS = [
     "no noise",
     "noise",
     "no reverb",
+    "noreverb",
     "reverb",
     "no echo",
     "echo",
@@ -674,6 +675,10 @@ def _normalize_key(name: str) -> str:
     return name.strip().lower().replace("_", " ").replace("-", " ")
 
 
+def _compact_key(name: str) -> str:
+    return _normalize_key(name).replace(" ", "")
+
+
 def _safe_name(name: str) -> str:
     safe = "".join(ch if ch.isalnum() or ch in ("-", "_") else "_" for ch in name.strip())
     return safe.strip("_") or "audio"
@@ -1216,6 +1221,13 @@ class ComfyMSSTGetStem:
         if key is None:
             contains = [name for norm, name in normalized.items() if _normalize_key(stem_name) in norm]
             key = contains[0] if contains else None
+        if key is None:
+            compact_stem_name = _compact_key(stem_name)
+            compact = {_compact_key(name): name for name in available.keys()}
+            key = compact.get(compact_stem_name)
+            if key is None:
+                contains = [name for norm, name in compact.items() if compact_stem_name in norm]
+                key = contains[0] if contains else None
         if key is None:
             for preferred in _online_entry_stems(model_info):
                 key = normalized.get(_normalize_key(preferred))
