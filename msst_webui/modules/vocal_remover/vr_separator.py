@@ -8,9 +8,6 @@ import librosa
 import numpy as np
 from tqdm import tqdm
 
-# Check if we really need the rerun_mp3 function, remove if not
-import audioread
-
 from modules.vocal_remover.common_separator import CommonSeparator
 from modules.vocal_remover.uvr_lib_v5 import spec_utils
 from modules.vocal_remover.uvr_lib_v5.vr_network import nets
@@ -327,7 +324,6 @@ class VRSeparator(CommonSeparator):
 
 # Check if we really need the rerun_mp3 function, refactor or remove if not
 def rerun_mp3(audio_file, sample_rate=44100):
-	with audioread.audio_open(audio_file) as f:
-		track_length = int(f.duration)
+	track_length = spec_utils.rerun_mp3(audio_file)
 
 	return librosa.load(audio_file, duration=track_length, mono=False, sr=sample_rate)[0]

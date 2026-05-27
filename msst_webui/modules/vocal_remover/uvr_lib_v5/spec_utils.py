@@ -1,7 +1,7 @@
-import audioread
 import librosa
 import numpy as np
 import soundfile as sf
+import torchaudio
 import math
 import platform
 import traceback
@@ -1309,8 +1309,22 @@ def load_audio(audio_file):
 	return wav
 
 
-def rerun_mp3(audio_file):
-	with audioread.audio_open(audio_file) as f:
-		track_length = int(f.duration)
+def get_audio_duration(audio_file):
+	audio_info = getattr(torchaudio, "info", None)
+	if audio_info is not None:
+		try:
+			metadata = audio_info(audio_file)
+			if metadata.sample_rate > 0 and metadata.num_frames > 0:
+				return metadata.num_frames / metadata.sample_rate
+		except Exception:
+			pass
 
-	return track_length
+	waveform, sample_rate = torchaudio.load(audio_file)
+	if sample_rate <= 0:
+		raise RuntimeError(f"Unable to determine audio duration for {audio_file}")
+
+	return waveform.shape[-1] / sample_rate
+
+
+def rerun_mp3(audio_file):
+	return int(get_audio_duration(audio_file))
