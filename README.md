@@ -165,9 +165,11 @@ wiki: `https://my.feishu.cn/wiki/Dy0bwG4XIizBgJkePDucILaMnlf`. These model weigh
 
 - `MSST Online Model Loader`: select a model from
   `msst_webui/data/models_info.json`, download from `hf-mirror.com`,
-  `huggingface.co`, or a custom reverse-proxy host, and reuse existing files
-  when size/SHA256 validation passes. The selected model's category, stems,
-  notes, and rating are shown directly inside the node.
+  `huggingface.co`, or a custom reverse-proxy host. HTTPS/SSL certificate
+  verification can be disabled for environments with broken local CA chains or
+  custom proxy certificates. Existing files are reused when size/SHA256
+  validation passes. The selected model's category, stems, notes, and rating
+  are shown directly inside the node.
 - `MSST Model From Catalog`: select a known MSST checkpoint from the model index.
 - `MSST Model From Paths`: use a custom MSST checkpoint and YAML config.
 - `MSST Separate Audio`: run MSST models for vocals, multi-stem separation,

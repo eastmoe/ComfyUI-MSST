@@ -3,6 +3,7 @@ import hashlib
 import json
 import os
 import shutil
+import ssl
 import sys
 import tempfile
 import threading
@@ -420,6 +421,7 @@ def _model_info_payload(entry: Dict[str, Any], local_path: Optional[Path] = None
     payload = dict(entry)
     payload["model_name"] = str(payload.get("model_name") or "")
     payload["model_class"] = str(payload.get("model_class") or "")
+    payload["choice_key"] = _online_choice_key(payload)
     payload["stems"] = _online_entry_stems(payload)
     payload["size"] = str(payload.get("size") or "").strip() or _format_size(payload.get("model_size"))
     payload["note"] = str(payload.get("note") or "")
@@ -488,12 +490,13 @@ def _is_cached_file(path: Path, entry: Dict[str, Any], verify_sha256: bool) -> b
     return True
 
 
-def _download_to_path(url: str, destination: Path, timeout_sec: int) -> None:
+def _download_to_path(url: str, destination: Path, timeout_sec: int, verify_ssl: bool) -> None:
     destination.parent.mkdir(parents=True, exist_ok=True)
     request = urllib.request.Request(url, headers={"User-Agent": "ComfyUI-MSST/online-loader"})
+    context = None if verify_ssl else ssl._create_unverified_context()
     part_path = destination.with_name(destination.name + ".part")
     try:
-        with urllib.request.urlopen(request, timeout=max(1, int(timeout_sec))) as response, part_path.open("wb") as output:
+        with urllib.request.urlopen(request, timeout=max(1, int(timeout_sec)), context=context) as response, part_path.open("wb") as output:
             shutil.copyfileobj(response, output, length=1024 * 1024)
         os.replace(part_path, destination)
     finally:
@@ -894,6 +897,7 @@ class ComfyMSSTOnlineModelLoader:
                 "custom_host": ("STRING", _ui("自定义反代", "download_host 为 custom 时使用，例如 hf-mirror.com 或 https://your.domain。", default="")),
                 "force_download": ("BOOLEAN", _ui("强制重下", "忽略本地缓存并重新下载模型文件。", default=False)),
                 "verify_sha256": ("BOOLEAN", _ui("校验SHA256", "清单中有 sha256 时校验文件完整性；大模型会多花一点时间。", default=True)),
+                "verify_ssl": ("BOOLEAN", _ui("SSL证书校验", "下载 Hugging Face/hf-mirror/custom HTTPS 模型时校验证书；证书链异常时可关闭。", default=True)),
             },
             "optional": {
                 "timeout_sec": ("INT", _ui("超时秒数", "单次网络请求超时时间。大模型下载慢时可适当调大。", default=60, min=5, max=3600, step=5)),
@@ -909,11 +913,11 @@ class ComfyMSSTOnlineModelLoader:
         "模型名称、类型、stems、体积、备注、推荐星级和下载状态文本。",
         "下载或命中的本地模型路径。",
     )
-    DESCRIPTION = "从本地 README 推荐模型清单选择模型，支持 huggingface.co、hf-mirror.com 和自定义反代下载；已存在且大小/sha 匹配时直接复用缓存。"
+    DESCRIPTION = "从本地 README 推荐模型清单选择模型，支持 huggingface.co、hf-mirror.com 和自定义反代下载；可关闭 HTTPS 证书校验；已存在且大小/sha 匹配时直接复用缓存。"
     FUNCTION = "load"
     CATEGORY = CATEGORY
 
-    def load(self, model: str, download_host: str, custom_host: str, force_download: bool, verify_sha256: bool, timeout_sec=60):
+    def load(self, model: str, download_host: str, custom_host: str, force_download: bool, verify_sha256: bool, verify_ssl: bool = True, timeout_sec=60):
         if model == "No online models listed":
             raise FileNotFoundError(f"No downloadable models were found in: {_catalog_path()}")
 
@@ -924,10 +928,12 @@ class ComfyMSSTOnlineModelLoader:
         status = "使用本地缓存"
         if force_download or not cached:
             url = _rewrite_download_url(str(entry.get("link") or ""), download_host, custom_host)
-            _download_to_path(url, destination, int(timeout_sec))
+            _download_to_path(url, destination, int(timeout_sec), bool(verify_ssl))
             if not _is_cached_file(destination, entry, bool(verify_sha256)):
                 raise ValueError(f"Downloaded file failed cache validation: {destination}")
             status = f"已下载: {url}"
+            if not verify_ssl:
+                status += " (SSL证书校验已关闭)"
 
         entry = _model_info_payload(entry, destination, status)
         info = _online_entry_info(entry, destination, status)

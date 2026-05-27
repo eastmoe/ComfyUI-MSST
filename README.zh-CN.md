@@ -176,6 +176,7 @@ eastmoe/Comfy-MSST
 - `MSST 在线加载模型`
   - 从本地 `msst_webui/data/models_info.json` 选择 README 推荐表中的模型。
   - 支持 `hf-mirror.com`、`huggingface.co` 和自定义反代主机名下载。
+  - 支持关闭 HTTPS/SSL 证书校验，用于本机证书链异常或自定义反代证书不可用的环境。
   - 按模型类别自动保存到 `vocal_models`、`multi_stem_models`、`single_stem_models`、`VR_Models` 或 `SOME_weights`。
   - 已存在且大小/SHA256 匹配时直接复用缓存，避免重复下载。
   - 选择模型后会直接在节点下方显示分类、支持音轨、体积、备注和推荐星级。
