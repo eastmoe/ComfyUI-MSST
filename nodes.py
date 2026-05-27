@@ -698,14 +698,37 @@ def _get_separator(cache_key: Tuple[Any, ...], factory, cache_model: bool):
     return separator
 
 
+def _clear_torch_cache() -> None:
+    gc.collect()
+    if torch.cuda.is_available():
+        torch.cuda.synchronize()
+        torch.cuda.empty_cache()
+        try:
+            torch.cuda.ipc_collect()
+        except RuntimeError:
+            pass
+    if hasattr(torch.backends, "mps") and torch.backends.mps.is_available():
+        torch.mps.empty_cache()
+
+
+def _drop_separator_references(separator: Any) -> None:
+    for name in ("model", "model_instance", "model_run"):
+        if hasattr(separator, name):
+            try:
+                setattr(separator, name, None)
+            except Exception:
+                pass
+
+
 def _cleanup_separator(separator: Any, cache_model: bool, cache_key: Tuple[Any, ...]) -> None:
     if not cache_model:
         try:
             separator.del_cache()
         finally:
             _MODEL_CACHE.pop(cache_key, None)
+            _drop_separator_references(separator)
             del separator
-            gc.collect()
+            _clear_torch_cache()
 
 
 def _parse_device_ids(device_ids: str) -> List[int]:
