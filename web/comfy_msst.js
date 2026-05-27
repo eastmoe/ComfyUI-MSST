@@ -1,7 +1,15 @@
 import { app } from "../../scripts/app.js";
+import { api } from "../../scripts/api.js";
 
 let modelInfoPromise = null;
 let modelInfoData = null;
+const PROGRESS_NODE_CLASSES = new Set([
+    "ComfyMSSTSeparate",
+    "ComfyMSSTVRSeparate",
+    "ComfyMSSTPresetChain",
+    "ComfyMSSTSomeVocalToMidi",
+    "ComfyMSSTAdjustLoudness",
+]);
 
 function loadModelInfo() {
     if (!modelInfoPromise) {
@@ -330,6 +338,74 @@ function isModelInfoSourceNode(node) {
     ].some((className) => isNodeClass(node, className));
 }
 
+function isProgressNode(node) {
+    return Array.from(PROGRESS_NODE_CLASSES).some((className) => isNodeClass(node, className));
+}
+
+function progressNodeFromEvent(detail) {
+    const nodeId = detail?.display_node || detail?.display_node_id || detail?.node;
+    return nodeId != null ? app.graph.getNodeById?.(nodeId) : null;
+}
+
+function setPersistentProgress(node, value, label = "") {
+    if (!node || !isProgressNode(node)) {
+        return;
+    }
+    node.comfyMsstProgress = {
+        value: Math.max(0, Math.min(1, Number(value) || 0)),
+        label,
+    };
+    app.graph.setDirtyCanvas(true, true);
+}
+
+function drawPersistentProgress(node, ctx) {
+    const progress = node.comfyMsstProgress;
+    if (!progress || !isProgressNode(node)) {
+        return;
+    }
+
+    const margin = 10;
+    const height = 12;
+    const y = node.size[1] - height - 8;
+    const width = Math.max(20, node.size[0] - margin * 2);
+    const value = Math.max(0, Math.min(1, progress.value));
+    const label = progress.label || `${Math.round(value * 100)}%`;
+
+    ctx.save();
+    drawRoundedRect(ctx, margin, y, width, height, 4);
+    ctx.fillStyle = "rgba(28, 28, 28, 0.92)";
+    ctx.fill();
+    ctx.strokeStyle = "rgba(100, 100, 100, 0.8)";
+    ctx.stroke();
+
+    if (value > 0) {
+        drawRoundedRect(ctx, margin, y, Math.max(4, width * value), height, 4);
+        ctx.fillStyle = value >= 1 ? "#4caf7d" : "#6aa9ff";
+        ctx.fill();
+    }
+
+    ctx.font = "10px sans-serif";
+    ctx.fillStyle = "#f2f2f2";
+    ctx.textAlign = "center";
+    ctx.textBaseline = "middle";
+    ctx.fillText(fitLine(ctx, label, width - 8), margin + width / 2, y + height / 2);
+    ctx.restore();
+}
+
+function enhanceProgressNode(node) {
+    if (!isProgressNode(node) || node.comfyMsstProgressEnhanced) {
+        return;
+    }
+    node.comfyMsstProgressEnhanced = true;
+
+    const onDrawForeground = node.onDrawForeground;
+    node.onDrawForeground = function (ctx) {
+        const result = onDrawForeground?.apply(this, arguments);
+        drawPersistentProgress(this, ctx);
+        return result;
+    };
+}
+
 function enhanceGetStemNode(node) {
     if (!isNodeClass(node, "ComfyMSSTGetStem") || node.comfyMsstGetStemEnhanced) {
         return;
@@ -369,8 +445,18 @@ app.registerExtension({
             wrapModelWidgetCallback(node, () => {});
         }
         enhanceGetStemNode(node);
+        enhanceProgressNode(node);
     },
     beforeRegisterNodeDef(nodeType, nodeData) {
+        if (PROGRESS_NODE_CLASSES.has(nodeData.name)) {
+            const onNodeCreated = nodeType.prototype.onNodeCreated;
+            nodeType.prototype.onNodeCreated = function () {
+                const result = onNodeCreated?.apply(this, arguments);
+                enhanceProgressNode(this);
+                return result;
+            };
+        }
+
         if (nodeData.name === "ComfyMSSTOnlineModelLoader") {
             const onNodeCreated = nodeType.prototype.onNodeCreated;
             nodeType.prototype.onNodeCreated = function () {
@@ -425,4 +511,40 @@ app.registerExtension({
             };
         }
     },
+});
+
+api.addEventListener("executing", ({ detail }) => {
+    const node = progressNodeFromEvent(detail);
+    if (node) {
+        setPersistentProgress(node, 0, "0%");
+    }
+});
+
+api.addEventListener("progress", ({ detail }) => {
+    const node = progressNodeFromEvent(detail);
+    if (!node || !isProgressNode(node)) {
+        return;
+    }
+    const max = Number(detail?.max) || 0;
+    const value = max > 0 ? Number(detail?.value) / max : 0;
+    setPersistentProgress(node, value, `${Math.round(value * 100)}%`);
+});
+
+api.addEventListener("progress_state", ({ detail }) => {
+    for (const state of Object.values(detail?.nodes || {})) {
+        const node = progressNodeFromEvent(state);
+        if (!node || !isProgressNode(node)) {
+            continue;
+        }
+        const max = Number(state?.max) || 0;
+        const value = max > 0 ? Number(state?.value) / max : state?.state === "finished" ? 1 : 0;
+        setPersistentProgress(node, value, `${Math.round(value * 100)}%`);
+    }
+});
+
+api.addEventListener("executed", ({ detail }) => {
+    const node = progressNodeFromEvent(detail);
+    if (node) {
+        setPersistentProgress(node, 1, "100%");
+    }
 });

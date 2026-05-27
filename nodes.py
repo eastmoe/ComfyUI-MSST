@@ -53,6 +53,7 @@ MODEL_TYPES = [
 MODEL_CLASSES = ["vocal_models", "multi_stem_models", "single_stem_models"]
 MODEL_EXTENSIONS = {".ckpt", ".pth", ".th", ".chpt", ".pt", ".bin"}
 ENSEMBLE_MODES = ["avg_wave", "median_wave", "min_wave", "max_wave", "avg_fft", "median_fft", "min_fft", "max_fft"]
+LOUDNESS_MODES = ["gain_db", "target_rms_db", "target_peak_db"]
 STEM_PRESETS = [
     "vocals",
     "instrumental",
@@ -637,6 +638,32 @@ def _numpy_to_audio(batch: np.ndarray, sample_rate: int) -> Dict[str, Any]:
         batch = batch[None, :, :]
     tensor = torch.from_numpy(np.ascontiguousarray(batch)).float()
     return {"waveform": tensor, "sample_rate": int(sample_rate)}
+
+
+def _db_to_amp(db: float) -> float:
+    return float(10.0 ** (float(db) / 20.0))
+
+
+def _amp_to_db(value: float) -> float:
+    value = max(float(value), 1.0e-12)
+    return float(20.0 * np.log10(value))
+
+
+def _rms_db(audio: np.ndarray) -> float:
+    values = np.asarray(audio, dtype=np.float64)
+    return _amp_to_db(float(np.sqrt(np.mean(np.square(values)))))
+
+
+def _peak_db(audio: np.ndarray) -> float:
+    return _amp_to_db(float(np.max(np.abs(audio))))
+
+
+def _limit_peak(audio: np.ndarray, max_peak: float = 1.0) -> Tuple[np.ndarray, float]:
+    peak = float(np.max(np.abs(audio)))
+    if peak <= max_peak or peak <= 0:
+        return audio, 1.0
+    scale = max_peak / peak
+    return audio * scale, scale
 
 
 def _stem_to_channels_first(stem: np.ndarray) -> np.ndarray:
@@ -1389,6 +1416,72 @@ class ComfyMSSTSubtractAudio:
         return (_numpy_to_audio(out, sr_a),)
 
 
+class ComfyMSSTAdjustLoudness:
+    @classmethod
+    def INPUT_TYPES(cls):
+        return {
+            "required": {
+                "audio": ("AUDIO", _ui("输入音频", "需要调整响度的音频。")),
+                "mode": (LOUDNESS_MODES, _ui("调整模式", "gain_db 直接增减音量；target_rms_db 按 RMS 响度匹配；target_peak_db 按峰值匹配。", default="gain_db")),
+                "gain_db": ("FLOAT", _ui("增益dB", "mode 为 gain_db 时使用。正数变大，负数变小。", default=0.0, min=-60.0, max=60.0, step=0.1)),
+                "target_rms_db": ("FLOAT", _ui("目标RMS dBFS", "mode 为 target_rms_db 时使用。常见语音可从 -20 到 -14 之间尝试。", default=-18.0, min=-80.0, max=0.0, step=0.1)),
+                "target_peak_db": ("FLOAT", _ui("目标峰值 dBFS", "mode 为 target_peak_db 时使用。0 dBFS 为满幅，通常建议保留余量如 -1。", default=-1.0, min=-80.0, max=0.0, step=0.1)),
+                "scope": (["entire_audio", "each_batch"], _ui("计算范围", "entire_audio 对整批音频使用同一增益；each_batch 对每个批次分别计算。", default="entire_audio")),
+                "prevent_clipping": ("BOOLEAN", _ui("防止削波", "如果处理后峰值超过 1.0，则整体缩小到不削波。", default=True)),
+            }
+        }
+
+    RETURN_TYPES = ("AUDIO", "STRING")
+    RETURN_NAMES = ("音频", "响度信息")
+    OUTPUT_TOOLTIPS = ("调整响度后的音频。", "本次应用的模式、增益和处理前后电平。")
+    DESCRIPTION = "调整 ComfyUI AUDIO 的响度。支持直接 dB 增益、目标 RMS dBFS、目标峰值 dBFS，并可自动避免削波。"
+    FUNCTION = "adjust"
+    CATEGORY = CATEGORY
+
+    def _gain_for(self, batch: np.ndarray, mode: str, gain_db: float, target_rms_db: float, target_peak_db: float) -> float:
+        if mode == "gain_db":
+            return _db_to_amp(gain_db)
+        if mode == "target_rms_db":
+            current = _rms_db(batch)
+            if current <= -240:
+                return 1.0
+            return _db_to_amp(float(target_rms_db) - current)
+        if mode == "target_peak_db":
+            current = _peak_db(batch)
+            if current <= -240:
+                return 1.0
+            return _db_to_amp(float(target_peak_db) - current)
+        raise ValueError(f"Unsupported loudness mode: {mode}")
+
+    def adjust(self, audio, mode, gain_db, target_rms_db, target_peak_db, scope, prevent_clipping):
+        batch, sample_rate = _audio_to_numpy(audio)
+        source_rms = _rms_db(batch)
+        source_peak = _peak_db(batch)
+
+        out = batch.copy()
+        if scope == "each_batch":
+            gains = [self._gain_for(item, mode, gain_db, target_rms_db, target_peak_db) for item in out]
+            for index, gain in enumerate(gains):
+                out[index] *= gain
+            gain_summary = ", ".join(f"{_amp_to_db(gain):.2f} dB" for gain in gains)
+        else:
+            gain = self._gain_for(out, mode, gain_db, target_rms_db, target_peak_db)
+            out *= gain
+            gain_summary = f"{_amp_to_db(gain):.2f} dB"
+
+        clip_scale = 1.0
+        if prevent_clipping:
+            out, clip_scale = _limit_peak(out)
+
+        result_rms = _rms_db(out)
+        result_peak = _peak_db(out)
+        info = (
+            f"mode={mode}, gain={gain_summary}, clip_scale={clip_scale:.4f}, "
+            f"rms={source_rms:.2f}->{result_rms:.2f} dBFS, peak={source_peak:.2f}->{result_peak:.2f} dBFS"
+        )
+        return (_numpy_to_audio(out.astype(np.float32, copy=False), sample_rate), info)
+
+
 class ComfyMSSTPresetChain:
     @classmethod
     def INPUT_TYPES(cls):
@@ -1568,6 +1661,7 @@ NODE_CLASS_MAPPINGS = {
     "ComfyMSSTListStems": ComfyMSSTListStems,
     "ComfyMSSTEnsembleAudio": ComfyMSSTEnsembleAudio,
     "ComfyMSSTSubtractAudio": ComfyMSSTSubtractAudio,
+    "ComfyMSSTAdjustLoudness": ComfyMSSTAdjustLoudness,
     "ComfyMSSTPresetChain": ComfyMSSTPresetChain,
     "ComfyMSSTSomeVocalToMidi": ComfyMSSTSomeVocalToMidi,
     "ComfyMSSTClearCache": ComfyMSSTClearCache,
@@ -1586,6 +1680,7 @@ NODE_DISPLAY_NAME_MAPPINGS = {
     "ComfyMSSTListStems": "MSST 列出音轨",
     "ComfyMSSTEnsembleAudio": "MSST 音频合奏",
     "ComfyMSSTSubtractAudio": "MSST 音频相减",
+    "ComfyMSSTAdjustLoudness": "MSST 调整响度",
     "ComfyMSSTPresetChain": "MSST 运行预设链",
     "ComfyMSSTSomeVocalToMidi": "MSST SOME 人声转 MIDI",
     "ComfyMSSTClearCache": "MSST 清理模型缓存",
