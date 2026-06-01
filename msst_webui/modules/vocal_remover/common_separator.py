@@ -54,6 +54,7 @@ class CommonSeparator:
 		self.torch_device = config.get("torch_device")
 		self.torch_device_cpu = config.get("torch_device_cpu")
 		self.torch_device_mps = config.get("torch_device_mps")
+		self.torch_device_xpu = config.get("torch_device_xpu")
 
 		# Model data
 		self.model_name = config.get("model_name")

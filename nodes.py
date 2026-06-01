@@ -16,6 +16,7 @@ from typing import Any, Dict, Iterable, List, Optional, Tuple
 
 import numpy as np
 import torch
+from msst_webui.utils.device import clear_device_cache
 
 
 PLUGIN_DIR = Path(__file__).resolve().parent
@@ -727,15 +728,7 @@ def _get_separator(cache_key: Tuple[Any, ...], factory, cache_model: bool):
 
 def _clear_torch_cache() -> None:
     gc.collect()
-    if torch.cuda.is_available():
-        torch.cuda.synchronize()
-        torch.cuda.empty_cache()
-        try:
-            torch.cuda.ipc_collect()
-        except RuntimeError:
-            pass
-    if hasattr(torch.backends, "mps") and torch.backends.mps.is_available():
-        torch.mps.empty_cache()
+    clear_device_cache()
 
 
 def _drop_separator_references(separator: Any) -> None:
@@ -1123,8 +1116,8 @@ class ComfyMSSTSeparate:
             "required": {
                 "audio": ("AUDIO", _ui("输入音频", "需要分离的混合音频。")),
                 "msst_model": ("MSST_MODEL", _ui("MSST模型", "由“加载 MSST 模型”节点输出的模型对象。")),
-                "device": (["auto", "cuda", "cpu", "mps"], _ui("推理设备", "auto 自动选择可用硬件；CPU 很慢，通常建议使用 CUDA。", default="auto")),
-                "device_ids": ("STRING", _ui("显卡编号", "CUDA 设备编号，多个编号用逗号分隔，例如 0 或 0,1。", default="0")),
+                "device": (["auto", "cuda", "xpu", "cpu", "mps"], _ui("推理设备", "auto 自动选择可用硬件；CPU 很慢，通常建议使用 CUDA/XPU。", default="auto")),
+                "device_ids": ("STRING", _ui("显卡编号", "CUDA/XPU 设备编号，多个编号用逗号分隔，例如 0 或 0,1；XPU 当前仅使用第一个编号。", default="0")),
                 "use_tta": ("BOOLEAN", _ui("启用TTA", "测试时增强。可能略微改善效果，但会显著增加推理时间。", default=False)),
                 "cache_model": ("BOOLEAN", _ui("缓存模型", "保持模型在内存/显存中，重复运行更快；显存紧张时可关闭。", default=True)),
             },
@@ -1489,8 +1482,8 @@ class ComfyMSSTPresetChain:
             "required": {
                 "audio": ("AUDIO", _ui("输入音频", "需要按预设链处理的音频。")),
                 "preset_json_path": ("STRING", _ui("预设JSON路径", "MSST WebUI 预设文件路径。相对路径会从 MSST WebUI 目录解析。", default="presets/example.json")),
-                "device": (["auto", "cuda", "cpu", "mps"], _ui("MSST推理设备", "预设链中 MSST 模型使用的设备。", default="auto")),
-                "device_ids": ("STRING", _ui("显卡编号", "CUDA 设备编号，多个编号用逗号分隔，例如 0 或 0,1。", default="0")),
+                "device": (["auto", "cuda", "xpu", "cpu", "mps"], _ui("MSST推理设备", "预设链中 MSST 模型使用的设备。", default="auto")),
+                "device_ids": ("STRING", _ui("显卡编号", "CUDA/XPU 设备编号，多个编号用逗号分隔，例如 0 或 0,1；XPU 当前仅使用第一个编号。", default="0")),
                 "force_vr_cpu": ("BOOLEAN", _ui("VR强制CPU", "预设链中的 VR 模型是否强制使用 CPU。", default=False)),
                 "use_tta": ("BOOLEAN", _ui("启用TTA", "预设链中的模型是否启用测试时增强。", default=False)),
                 "cache_model": ("BOOLEAN", _ui("缓存模型", "缓存预设链中加载的模型，重复运行更快；显存紧张时可关闭。", default=True)),
@@ -1642,9 +1635,7 @@ class ComfyMSSTClearCache:
                 pass
         count = len(_MODEL_CACHE)
         _MODEL_CACHE.clear()
-        gc.collect()
-        if torch.cuda.is_available():
-            torch.cuda.empty_cache()
+        _clear_torch_cache()
         return (f"Cleared {count} cached MSST model(s).",)
 
 

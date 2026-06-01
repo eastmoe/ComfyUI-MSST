@@ -188,7 +188,7 @@ wiki: `https://my.feishu.cn/wiki/Dy0bwG4XIizBgJkePDucILaMnlf`. These model weigh
 - `MSST Preset Chain`: run an MSST-WEBUI preset JSON as an in-memory workflow.
 - `MSST SOME Vocal to MIDI`: convert clean vocal audio into a MIDI file using
   the SOME tool.
-- `MSST Clear Model Cache`: release cached separators and GPU memory.
+- `MSST Clear Model Cache`: release cached separators and CUDA/XPU/MPS memory.
 
 ## Typical Workflow
 
@@ -219,6 +219,10 @@ loading separation models.
 
 Install only the supplemental dependencies from this plugin's
 `requirements.txt` into the same Python environment that launches ComfyUI.
+
+For Intel Arc/Core Ultra GPUs, install a PyTorch build with `torch.xpu`
+support in the ComfyUI environment, then select `xpu` or leave the MSST device
+on `auto`. CUDA/ROCm remains the first auto-selected accelerator when present.
 
 ## License
 

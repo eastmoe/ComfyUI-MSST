@@ -13,6 +13,7 @@ from typing import Dict
 
 from utils.attrdict import AttrDict
 from utils.logger import get_logger
+from utils.device import amp_device_type, amp_enabled
 
 logger = get_logger()
 
@@ -118,7 +119,7 @@ def demix(config, model, mix: NDArray, device, model_type: str = None, callback=
 		window_middle[-fade_size:] *= fadeout
 		window_middle[:fade_size] *= fadein
 
-	with torch.amp.autocast("cuda", enabled=config.training.get("use_amp", True)):
+	with torch.amp.autocast(amp_device_type(device), enabled=amp_enabled(device, config.training.get("use_amp", True))):
 		with torch.inference_mode():
 			# Determine the shape of the result based on model type and configuration
 			if model_type == "htdemucs":

@@ -23,6 +23,7 @@ from einops import rearrange, pack, unpack
 from einops.layers.torch import Rearrange
 
 from neuralop.models import FNO
+from utils.device import device_type
 
 # helper functions
 
@@ -435,7 +436,7 @@ class MaskEstimatorFNO(Module):
 
 		for band_features, mlp in zip(x, self.to_freqs):
 			band_features = rearrange(band_features, 'b t c -> b c t')
-			with torch.autocast(device_type='cuda', enabled=False, dtype=torch.float32):
+			with torch.autocast(device_type=device_type(band_features.device), enabled=False, dtype=torch.float32):
 				freq_out = mlp(band_features).float()
 			freq_out = rearrange(freq_out, 'b c t -> b t c')
 			outs.append(freq_out)
@@ -626,8 +627,8 @@ class BSRoformer(Module):
 
 		device = raw_audio.device
 
-		# defining whether model is loaded on MPS (MacOS GPU accelerator)
-		x_is_mps = True if device.type == "mps" else False
+		# Some accelerators do not support FFT kernels for every PyTorch build.
+		x_uses_cpu_fft = device.type in {"mps", "xpu"}
 
 		if raw_audio.ndim == 2:
 			raw_audio = rearrange(raw_audio, 'b t -> b 1 t')
@@ -645,10 +646,10 @@ class BSRoformer(Module):
 		# Since it's tedious to define whether we're on correct MacOS version - simple try-catch is used
 		try:
 			stft_repr = torch.stft(raw_audio, **self.stft_kwargs, window=stft_window, return_complex=True)
-		except:
-			stft_repr = torch.stft(raw_audio.cpu() if x_is_mps else raw_audio, **self.stft_kwargs,
-								   window=stft_window.cpu() if x_is_mps else stft_window, return_complex=True).to(
-				device)
+		except Exception:
+			if not x_uses_cpu_fft:
+				raise
+			stft_repr = torch.stft(raw_audio.cpu(), **self.stft_kwargs, window=stft_window.cpu(), return_complex=True).to(device)
 		stft_repr = torch.view_as_real(stft_repr)
 
 		stft_repr = unpack_one(stft_repr, batch_audio_channel_packed_shape, '* f t c')
@@ -741,8 +742,10 @@ class BSRoformer(Module):
 		# same as torch.stft() fix for MacOS MPS above
 		try:
 			recon_audio = torch.istft(stft_repr, **self.stft_kwargs, window=stft_window, return_complex=False, length=raw_audio.shape[-1])
-		except:
-			recon_audio = torch.istft(stft_repr.cpu() if x_is_mps else stft_repr, **self.stft_kwargs, window=stft_window.cpu() if x_is_mps else stft_window, return_complex=False, length=raw_audio.shape[-1]).to(device)
+		except Exception:
+			if not x_uses_cpu_fft:
+				raise
+			recon_audio = torch.istft(stft_repr.cpu(), **self.stft_kwargs, window=stft_window.cpu(), return_complex=False, length=raw_audio.shape[-1]).to(device)
 
 		recon_audio = rearrange(recon_audio, '(b n s) t -> b n s t', s=self.audio_channels, n=num_stems)
 

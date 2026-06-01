@@ -241,7 +241,7 @@ eastmoe/Comfy-MSST
   - 输出 MIDI 通常仍需在 DAW 或 MIDI 编辑器中手动修正节拍和音符。
 
 - `MSST 清理模型缓存`
-  - 清除扩展缓存的分离模型，并尝试释放 CUDA 显存。
+  - 清除扩展缓存的分离模型，并尝试释放 CUDA/XPU/MPS 显存。
 
 ## 常用工作流
 
@@ -288,11 +288,12 @@ Load Audio
 
 - `device`
   - `auto` 自动选择设备。
-  - `cuda` 使用 NVIDIA GPU。
+  - `cuda` 使用 NVIDIA/ROCm GPU。
+  - `xpu` 使用 Intel XPU。需要在 ComfyUI 的 Python 环境中安装带 XPU 支持的 PyTorch。
   - `cpu` 很慢，一般不建议用于 MSST 推理。
 
 - `device_ids`
-  - CUDA 编号，例如 `0` 或 `0,1`。
+  - CUDA/XPU 编号，例如 `0` 或 `0,1`。XPU 当前仅使用第一个编号。
 
 - `use_tta`
   - 测试时增强，可能稍微改善效果，但推理会变慢。

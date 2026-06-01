@@ -14,6 +14,7 @@ from safetensors.torch import load_file
 from utils.utils import demix, get_model_from_config
 from utils.logger import get_logger, set_log_level
 from utils.audio_export import save_audio_file
+from utils.device import clear_device_cache, device_type, select_device
 
 
 def _drop_legacy_rotary_freqs(state_dict):
@@ -70,19 +71,9 @@ class MSSeparator:
 		self.log_system_info()
 		self.check_ffmpeg_installed()
 
-		self.device = "cpu"
 		self.device_ids = device_ids
 
-		if device not in ["cpu", "cuda", "mps"]:
-			if torch.cuda.is_available():
-				self.device = "cuda"
-				self.device = f"cuda:{self.device_ids[0]}"
-				self.logger.debug("CUDA is available in Torch, setting Torch device to CUDA")
-			elif torch.backends.mps.is_available():
-				self.device = "mps"
-				self.logger.debug("Apple Silicon MPS/CoreML is available in Torch, setting Torch device to MPS")
-		else:
-			self.device = device
+		self.device = select_device(device, self.device_ids, self.logger)
 
 		if self.device == "cpu":
 			self.logger.warning("No hardware acceleration could be configured, running in CPU mode")
@@ -133,23 +124,26 @@ class MSSeparator:
 			f"Model params: batch_size: {config.inference.get('batch_size', None)}, num_overlap: {config.inference.get('num_overlap', None)}, chunk_size: {config.audio.get('chunk_size', None)}, normalize: {config.inference.get('normalize', None)}, use_tta: {self.use_tta}"
 		)
 
+		load_device = "cpu" if device_type(self.device) == "xpu" else self.device
 		if self.model_type in ["htdemucs", "apollo"]:
-			state_dict = torch.load(self.model_path, map_location=self.device, weights_only=False)
+			state_dict = torch.load(self.model_path, map_location=load_device, weights_only=False)
 			if "state" in state_dict:
 				state_dict = state_dict["state"]
 			if "state_dict" in state_dict:
 				state_dict = state_dict["state_dict"]
 		elif self.model_path.endswith("safetensors"):
-			state_dict = load_file(self.model_path, device=self.device)
+			state_dict = load_file(self.model_path, device=load_device)
 		else:
-			state_dict = torch.load(self.model_path, map_location=self.device, weights_only=True)
+			state_dict = torch.load(self.model_path, map_location=load_device, weights_only=True)
 		legacy_rotary_keys = _drop_legacy_rotary_freqs(state_dict)
 		if legacy_rotary_keys:
 			self.logger.debug(f"Ignored {len(legacy_rotary_keys)} legacy rotary embedding cache keys while loading model.")
 		model.load_state_dict(state_dict)
 
-		if len(self.device_ids) > 1:
+		if len(self.device_ids) > 1 and device_type(self.device) == "cuda":
 			model = torch.nn.DataParallel(model, device_ids=self.device_ids)
+		elif len(self.device_ids) > 1:
+			self.logger.warning(f"Multiple device_ids are only supported for CUDA DataParallel, using device: {self.device}")
 		model = model.to(self.device)
 		model.eval()
 
@@ -357,12 +351,7 @@ class MSSeparator:
 	def del_cache(self):
 		self.logger.debug("Running garbage collection...")
 		gc.collect()
-		if "mps" in self.device:
-			self.logger.debug("Clearing MPS cache...")
-			torch.mps.empty_cache()
-		if "cuda" in self.device:
-			self.logger.debug("Clearing CUDA cache...")
-			torch.cuda.empty_cache()
+		clear_device_cache(self.device)
 
 	def update_inference_params(self, config, params):
 		for key, value in {"batch_size": "inference", "num_overlap": "inference", "chunk_size": "audio", "normalize": "inference"}.items():

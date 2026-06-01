@@ -377,6 +377,7 @@ class MelBandRoformer(Module):
 		"""
 
 		device = raw_audio.device
+		x_uses_cpu_fft = device.type in {"mps", "xpu"}
 
 		if raw_audio.ndim == 2:
 			raw_audio = rearrange(raw_audio, "b t -> b 1 t")
@@ -395,7 +396,12 @@ class MelBandRoformer(Module):
 
 		stft_window = self.stft_window_fn(device=device)
 
-		stft_repr = torch.stft(raw_audio, **self.stft_kwargs, window=stft_window, return_complex=True)
+		try:
+			stft_repr = torch.stft(raw_audio, **self.stft_kwargs, window=stft_window, return_complex=True)
+		except Exception:
+			if not x_uses_cpu_fft:
+				raise
+			stft_repr = torch.stft(raw_audio.cpu(), **self.stft_kwargs, window=stft_window.cpu(), return_complex=True).to(device)
 		stft_repr = torch.view_as_real(stft_repr)
 
 		stft_repr = unpack_one(stft_repr, batch_audio_channel_packed_shape, "* f t c")
@@ -486,7 +492,7 @@ class MelBandRoformer(Module):
 		scatter_indices = repeat(self.freq_indices, "f -> b n f t", b=batch, n=num_stems, t=stft_repr.shape[-1])
 
 		stft_repr_expanded_stems = repeat(stft_repr, "b 1 ... -> b n ...", n=num_stems)
-		if device.type == "mps":
+		if device.type in {"mps", "xpu"}:
 			masks_summed = torch.zeros_like(stft_repr_expanded_stems, device="cpu").scatter_add_(2, scatter_indices.cpu(), masks.cpu()).to(device=device)
 		else:
 			masks_summed = torch.zeros_like(stft_repr_expanded_stems).scatter_add_(2, scatter_indices, masks)
@@ -503,7 +509,12 @@ class MelBandRoformer(Module):
 
 		stft_repr = rearrange(stft_repr, "b n (f s) t -> (b n s) f t", s=self.audio_channels)
 
-		recon_audio = torch.istft(stft_repr, **self.stft_kwargs, window=stft_window, return_complex=False, length=istft_length)
+		try:
+			recon_audio = torch.istft(stft_repr, **self.stft_kwargs, window=stft_window, return_complex=False, length=istft_length)
+		except Exception:
+			if not x_uses_cpu_fft:
+				raise
+			recon_audio = torch.istft(stft_repr.cpu(), **self.stft_kwargs, window=stft_window.cpu(), return_complex=False, length=istft_length).to(device)
 
 		recon_audio = rearrange(recon_audio, "(b n s) t -> b n s t", b=batch, s=self.audio_channels, n=num_stems)
 

@@ -16,6 +16,7 @@ from modules.vocal_remover.vr_separator import VRSeparator as VR
 from utils.audio_export import save_audio_file
 from utils.logger import get_logger, set_log_level
 from utils.constant import TEMP_PATH, MODELS_INFO
+from utils.device import clear_device_cache, is_xpu_available
 
 
 class VRSeparator:
@@ -50,6 +51,7 @@ class VRSeparator:
 		self.torch_device = None
 		self.torch_device_cpu = None
 		self.torch_device_mps = None
+		self.torch_device_xpu = None
 		self.model_instance = None
 		self.audio_params = audio_params
 		self.callback = callback
@@ -115,6 +117,9 @@ class VRSeparator:
 		if torch.cuda.is_available():
 			self.configure_cuda()
 			hardware_acceleration_enabled = True
+		elif is_xpu_available():
+			self.configure_xpu()
+			hardware_acceleration_enabled = True
 		elif hasattr(torch.backends, "mps") and torch.backends.mps.is_available():
 			self.configure_mps()
 			hardware_acceleration_enabled = True
@@ -126,6 +131,11 @@ class VRSeparator:
 	def configure_cuda(self):
 		self.logger.info("CUDA is available in Torch, setting Torch device to CUDA")
 		self.torch_device = torch.device("cuda")
+
+	def configure_xpu(self):
+		self.logger.info("Intel XPU is available in Torch, setting Torch device to XPU")
+		self.torch_device_xpu = torch.device("xpu")
+		self.torch_device = self.torch_device_xpu
 
 	def configure_mps(self):
 		self.logger.info("Apple Silicon MPS/CoreML is available in Torch, setting Torch device to MPS")
@@ -157,6 +167,7 @@ class VRSeparator:
 			"torch_device": self.torch_device,
 			"torch_device_cpu": self.torch_device_cpu,
 			"torch_device_mps": self.torch_device_mps,
+			"torch_device_xpu": self.torch_device_xpu,
 			"model_name": model_name,
 			"model_path": model_path,
 			"model_data": model_data,
@@ -259,9 +270,4 @@ class VRSeparator:
 	def del_cache(self):
 		self.logger.debug("Running garbage collection...")
 		gc.collect()
-		if self.torch_device == torch.device("mps"):
-			self.logger.debug("Clearing MPS cache...")
-			torch.mps.empty_cache()
-		if self.torch_device == torch.device("cuda"):
-			self.logger.debug("Clearing CUDA cache...")
-			torch.cuda.empty_cache()
+		clear_device_cache(self.torch_device)

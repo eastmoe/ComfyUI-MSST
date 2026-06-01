@@ -7,6 +7,7 @@ import numpy as np
 import torch
 from torch import nn
 from torch.nn import functional as F
+from utils.device import clear_device_cache
 
 
 @torch.jit.script
@@ -161,7 +162,7 @@ class BaseFader(nn.Module):
 			fn = merge_chunks_edge
 		outputs = {}
 
-		torch.cuda.empty_cache()
+		clear_device_cache(original_device)
 
 		for s, c in all_chunks_out.items():
 			combined: torch.Tensor = fn(
